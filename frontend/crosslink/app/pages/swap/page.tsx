@@ -13,12 +13,15 @@ import { waitForTransactionReceipt } from "@wagmi/core";
 import { useHook } from "../../../components/hookContext";
 import { getAllowance } from "../../../utils/functions/allowanceFunction";
 import { getBalance } from "../../../utils/functions/createTokenFunctions";
-
+import { getAccount } from "@wagmi/core";
+import { type GetAccountReturnType } from '@wagmi/core'
 
 const Swap = () => {
-  return (
-    <div>Swap</div>
-  )
-}
+  const account = getAccount(config);
 
-export default Swap
+  console.log("Chain Id " + account.chainId);
+
+  return <div>Swap</div>;
+};
+
+export default Swap;

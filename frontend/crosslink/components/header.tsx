@@ -15,9 +15,19 @@ const Header = () => {
   const { selectedHook, setSelectedHook, selectedColor, setSelectedColor } =
     useHook();
   const [isLimitOrderSelected, setIsLimitOrderSelected] = useState(false);
+  const [selectedPage, setSelectedPage] = useState("");
 
   const handleNavigation = (path: string) => {
     router.push(path);
+    setSelectedPage(path);
+  };
+
+  const getButtonClass = (path: string) => {
+    return `transition ${
+      selectedPage === path
+        ? "border p-2 border-white text-white border-opacity-50 rounded-xl"
+        : "text-white p-2 hover:text-gray-400 transition"
+    }`;
   };
 
   const handleHookSelection = (
@@ -32,33 +42,33 @@ const Header = () => {
 
   return (
     <header className="w-full flex justify-between items-center py-4 px-8 bg-transparent">
-      <div className="flex space-x-4">
+      <div className="flex space-x-8">
         <Link href={"/"}>
           <div className="flex flex-row space-x-2">
             <Image src={"/icon.png"} width={50} height={40} alt="InfHook" />
-            <h1 className="text-cyan-400 flex pt-[7px] text-xl">InfHook</h1>
+            <h1 className="text-cyan-400 flex pt-[7px] text-xl">CrossLink</h1>
           </div>
         </Link>
         <button
           onClick={() => handleNavigation(`/pages/swap`)}
-          className={`text-white hover:text-gray-400 transition`}
+          className={getButtonClass(`/pages/swap`)}
         >
           Swap
         </button>
         <button
           onClick={() => handleNavigation("/pages/explore")}
-          className="text-white hover:text-gray-400 transition"
+          className={getButtonClass(`/pages/explore`)}
         >
           Explorer
         </button>
         <button
           onClick={() => handleNavigation(`/pages/myPools`)}
-          className="text-white hover:text-gray-400 transition"
+          className={getButtonClass(`/pages/myPools`)}
         >
           My Positions
         </button>
         <button
-          className="text-white hover:text-gray-400 transition"
+          className={getButtonClass(`/pages/createToken`)}
           onClick={() => handleNavigation(`/pages/createToken`)}
         >
           Create Token
@@ -77,7 +87,7 @@ const Header = () => {
         {isLimitOrderSelected && (
           <button
             onClick={() => handleNavigation("/pages/myOrders")}
-            className="text-white  hover:text-gray-400 transition"
+            className={getButtonClass(`/pages/myOrders`)}
           >
             My Orders
           </button>
