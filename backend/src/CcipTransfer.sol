@@ -60,7 +60,7 @@ contract CcipTransfer is OwnerIsCreator {
         address _token,
         uint256 _amount
     )
-        external
+        public
         onlyOwner
         onlyAllowlistedChain(_destinationChainSelector)
         validateReceiver(_receiver)

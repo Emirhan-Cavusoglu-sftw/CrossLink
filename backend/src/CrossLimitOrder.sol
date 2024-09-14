@@ -291,7 +291,8 @@ contract CrossLimitOrder is BaseHook, ERC1155, CcipTransfer {
         PoolKey calldata key,
         int24 tickToSellAt,
         bool zeroForOne,
-        uint256 inputAmountToClaimFor
+        uint256 inputAmountToClaimFor,
+        uint64 destinationChainSelector
     ) external {
         int24 tick = getLowerUsableTick(tickToSellAt, key.tickSpacing);
         uint256 positionId = getPositionId(key, tick, zeroForOne);
@@ -315,6 +316,7 @@ contract CrossLimitOrder is BaseHook, ERC1155, CcipTransfer {
 
         Currency token = zeroForOne ? key.currency1 : key.currency0;
         token.transfer(msg.sender, outputAmount);
+        transferTokensPayLINK(destinationChainSelector,msg.sender,Currency.unwrap(token), outputAmount);
     }
 
     // Helper Functions
