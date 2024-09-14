@@ -5,7 +5,7 @@ import { getAccount } from "@wagmi/core";
 import { ERC20ABI } from "../ERC20ABI.json";
 import { parseUnits, formatUnits } from "viem";
 
-const launchPadAddress = "0x3975290f968Ce8354Dcd930235Bcc7eC66e4F681";
+const launchPadAddress = "0x5112c7a1E0D89ca200ecd23BB38fDc21dd5C6B51";
 
 export async function createToken(tokenName: string, tokenSymbol: string) {
   try {

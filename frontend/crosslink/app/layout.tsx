@@ -25,7 +25,7 @@ export default function RootLayout({
         <Provider>
           <HookProvider>
             <Header />
-            <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+            <Suspense>{children}</Suspense>
           </HookProvider>
         </Provider>
       </body>

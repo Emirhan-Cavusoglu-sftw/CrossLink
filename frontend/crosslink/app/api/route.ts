@@ -1,65 +1,25 @@
+import { NextResponse } from 'next/server';
 import { ethers } from "ethers";
 import { keccak256 } from "ethers/lib/utils";
-import { NextApiRequest, NextApiResponse } from "next";
+import { PoolManagerABI } from "../../utils/poolManagerABI.json";
 
-const etherScanApiKey = process.env.ETHERSCAN_API_KEY || "";
-const arbiscanApiKey = process.env.ARBISCAN_API_KEY || "";
+const etherScanApiKey = process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY || "";
+const arbiscanApiKey = process.env.NEXT_PUBLIC_ARBISCAN_API_KEY || "";
 
-const CounterAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-const SecondAddress = "0xYourSecondContractAddress"; // Diğer adres burada
+const CounterAddress = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
+const SecondAddress = "0xYourSecondContractAddress";
 
-// const ABI = [
-//     "Initialize(bytes32,address,address,uint24,int24,address,uint160,int24)"
-// ];
-
-// const ABI2 = [
-//     "OrderPlaced(address,address,uint24,int24,address,int24,bool,uint256,address)"
-// ];
-
-interface Event {
-  eventName: string;
-  args: {
-    currency0: string;
-    currency1: string;
-    fee: number;
-    hooks: string;
-    id: string;
-    sqrtPriceX96: string;
-    tick: number;
-    tickSpacing: number;
-  };
-}
-
-interface Order {
-  eventName: string;
-  args: {
-    currency0: string;
-    currency1: string;
-    fee: number;
-    tickSpacing: number;
-    hooks: string;
-    tickToSellAt: number;
-    zeroForOne: boolean;
-    inputAmount: number;
-    sender: string;
-  };
-  positionId: number;
-  balance: number;
-  claimableTokens: number;
-}
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export async function POST(req: Request) {
   try {
-    // İstekten chainId ve ABI bilgilerini alıyoruz
-    const { chainId, ABIType } = req.body;
+    console.log("Received request"); // Log when the request is received
+    const body = await req.json();
+    const { chainId, ABIType } = body;
+
+    console.log("Request body:", body); // Log the request body
 
     let apiBaseUrl = "";
     let apiKey = "";
 
-    // Choose API based on chain ID
     if (chainId === 11155111) {
       apiBaseUrl = "https://api-sepolia.etherscan.io/api";
       apiKey = etherScanApiKey;
@@ -67,15 +27,16 @@ export default async function handler(
       apiBaseUrl = "https://api-sepolia.arbiscan.io/api";
       apiKey = arbiscanApiKey;
     } else {
-      return res.status(400).json({ message: "Unsupported chain" });
+      return NextResponse.json({ message: "Unsupported chain" }, { status: 400 });
     }
 
-    // ABI türüne göre event signature ve adres seçimi
+    console.log("API Base URL:", apiBaseUrl, "API Key:", apiKey);
+
     let selectedABI, selectedAddress, eventSignature;
 
     if (ABIType === "Initialize") {
       selectedABI = [
-        "Initialize(bytes32,address,address,uint24,int24,address,uint160,int24)",
+        "event Initialize(PoolId indexed id, Currency indexed currency1, uint24 fee, int24 tickSpacing, IHooks hooks, uint160 sqrtPriceX96, int24 tick)"
       ];
       eventSignature = keccak256(
         ethers.utils.toUtf8Bytes(
@@ -85,7 +46,7 @@ export default async function handler(
       selectedAddress = CounterAddress;
     } else if (ABIType === "OrderPlaced") {
       selectedABI = [
-        "OrderPlaced(address,address,uint24,int24,address,int24,bool,uint256,address)",
+        "OrderPlaced(address,address,uint24,int24,address,int24,bool,uint256,address)"
       ];
       eventSignature = keccak256(
         ethers.utils.toUtf8Bytes(
@@ -94,10 +55,12 @@ export default async function handler(
       );
       selectedAddress = SecondAddress;
     } else {
-      return res.status(400).json({ message: "Invalid ABI type" });
+      return NextResponse.json({ message: "Invalid ABI type" }, { status: 400 });
     }
 
-    // Logları fetch ediyoruz
+    console.log("Selected ABI:", selectedABI);
+    console.log("Event Signature:", eventSignature);
+
     const response = await fetch(
       `${apiBaseUrl}?module=logs&action=getLogs&address=${selectedAddress}&topic0=${eventSignature}&apikey=${apiKey}`
     );
@@ -105,14 +68,13 @@ export default async function handler(
 
     if (data.status === "1") {
       const logs = data.result;
-      const iface = new ethers.utils.Interface(selectedABI);
+      const iface = new ethers.utils.Interface(PoolManagerABI);
 
-      // Gelen ABI türüne göre eventları decode ediyoruz
       let decodedEvents;
       if (ABIType === "Initialize") {
         decodedEvents = logs.map((log: any) => {
           const parsedLog = iface.parseLog(log);
-          const event: Event = {
+          return {
             eventName: parsedLog.name,
             args: {
               currency0: parsedLog.args[1],
@@ -123,14 +85,13 @@ export default async function handler(
               sqrtPriceX96: parsedLog.args[6],
               tick: parsedLog.args[7],
               tickSpacing: parsedLog.args[4],
-            },
+            }
           };
-          return event;
         });
       } else if (ABIType === "OrderPlaced") {
         decodedEvents = logs.map((log: any) => {
           const parsedLog = iface.parseLog(log);
-          const event: Order = {
+          return {
             eventName: parsedLog.name,
             args: {
               currency0: parsedLog.args[0],
@@ -143,23 +104,20 @@ export default async function handler(
               inputAmount: parsedLog.args[7],
               sender: parsedLog.args[8],
             },
-            positionId: Number(log.topics[1]), // ID'yi topics'ten alabilirsiniz
-            balance: Number(log.data), // Örneğin datadan
-            claimableTokens: 0, // Placeholder, farklı bir veri kaynağına bağlı olabilir
+            positionId: Number(log.topics[1]),
+            balance: Number(log.data),
+            claimableTokens: 0,
           };
-          return event;
         });
       }
 
-      return res.status(200).json({ events: decodedEvents });
+      console.log("Decoded Events:", decodedEvents);
+      return NextResponse.json({ events: decodedEvents });
     } else {
-      return res
-        .status(400)
-        .json({ message: data.message || "No events found" });
+      console.error("No events found:", data.message);
+      return NextResponse.json({ message: data.message || "No events found" }, { status: 400 });
     }
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Error fetching logs", error: (error as any).message });
+    return NextResponse.json({ message: "Error fetching logs", error: (error as any).message }, { status: 500 });
   }
 }
