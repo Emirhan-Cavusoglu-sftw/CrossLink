@@ -38,8 +38,11 @@ contract CrossLimitOrder is BaseHook, ERC1155, CcipTransfer {
         IPoolManager _manager,
         string memory _uri,
         address _router,
-        address _link
-    ) BaseHook(_manager) ERC1155(_uri) CcipTransfer(_router,_link) {}
+        address _link,
+        uint64 _chainSelector
+    ) BaseHook(_manager) ERC1155(_uri) CcipTransfer(_router, _link) {
+        chainSelector = _chainSelector;
+    }
 
     event OrderPlaced(
         Currency currency0,
@@ -52,15 +55,13 @@ contract CrossLimitOrder is BaseHook, ERC1155, CcipTransfer {
         uint256 inputAmount,
         address sender
     );
-
+    uint64 public chainSelector;
     mapping(PoolId poolId => mapping(int24 tickToSellAt => mapping(bool zeroForOne => uint256 inputAmount)))
         public pendingOrders;
 
     mapping(uint256 positionId => uint256 claimsSupply)
         public claimTokensSupply;
-    
 
-    
     mapping(uint256 positionId => uint256 outputClaimable)
         public claimableOutputTokens;
 
@@ -109,10 +110,8 @@ contract CrossLimitOrder is BaseHook, ERC1155, CcipTransfer {
         BalanceDelta,
         bytes calldata
     ) external override onlyPoolManager returns (bytes4, int128) {
-       
         if (sender == address(this)) return (this.afterSwap.selector, 0);
 
-       
         bool tryMore = true;
         int24 currentTick;
 
@@ -123,7 +122,6 @@ contract CrossLimitOrder is BaseHook, ERC1155, CcipTransfer {
             );
         }
 
-       
         lastTicks[key.toId()] = currentTick;
         return (this.afterSwap.selector, 0);
     }
@@ -149,8 +147,7 @@ contract CrossLimitOrder is BaseHook, ERC1155, CcipTransfer {
                     return (true, currentTick);
                 }
             }
-        }
-        else {
+        } else {
             for (
                 int24 tick = lastTick;
                 tick >= currentTick;
@@ -228,12 +225,10 @@ contract CrossLimitOrder is BaseHook, ERC1155, CcipTransfer {
         BalanceDelta delta = poolManager.swap(key, params, "");
 
         if (params.zeroForOne) {
-           
             if (delta.amount0() < 0) {
                 _settle(key.currency0, uint128(-delta.amount0()));
             }
 
-          
             if (delta.amount1() > 0) {
                 _take(key.currency1, uint128(delta.amount1()));
             }
@@ -309,14 +304,21 @@ contract CrossLimitOrder is BaseHook, ERC1155, CcipTransfer {
             totalInputAmountForPosition
         );
 
-        
         claimableOutputTokens[positionId] -= outputAmount;
         claimTokensSupply[positionId] -= inputAmountToClaimFor;
         _burn(msg.sender, positionId, inputAmountToClaimFor);
 
         Currency token = zeroForOne ? key.currency1 : key.currency0;
-        token.transfer(msg.sender, outputAmount);
-        transferTokensPayLINK(destinationChainSelector,msg.sender,Currency.unwrap(token), outputAmount);
+        if (destinationChainSelector == chainSelector) {
+            token.transfer(msg.sender, outputAmount);
+        } else {
+            transferTokensPayLINK(
+                destinationChainSelector,
+                msg.sender,
+                Currency.unwrap(token),
+                outputAmount
+            );
+        }
     }
 
     // Helper Functions
