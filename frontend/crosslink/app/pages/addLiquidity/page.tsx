@@ -89,10 +89,10 @@ const Liquidity = () => {
       "0xc66f440Ee31e3aE0b026972Ad0C6D62DfD27596B";
 
     // Token 0 için allowance kontrolü
-    // const allowance1 = await getAllowance(
-    //   String(token0),
-    //   poolModifyLiquidityAddress
-    // );
+    const allowance1 = await getAllowance(
+      String(token0),
+      poolModifyLiquidityAddress
+    );
 
     // Token 1 için allowance kontrolü
     const allowance2 = await getAllowance(
@@ -103,13 +103,13 @@ const Liquidity = () => {
     let approve1hash, approve2hash;
 
     // Allowance kontrolü yap, 0 ise approve yap
-    // if (BigInt(0) === BigInt(0)) {
-    //   console.log("Token 0 için onay gerekli.");
-    //   approve1hash = await Approve(String(token0), poolModifyLiquidityAddress);
-    //   await waitForTransactionReceipt(config, { hash: approve1hash });
-    // } else {
-    //   console.log("Token 0 için onay gerekli değil.");
-    // }
+    if (BigInt(allowance1) === BigInt(0)) {
+      console.log("Token 0 için onay gerekli.");
+      approve1hash = await Approve(String(token0), poolModifyLiquidityAddress);
+      await waitForTransactionReceipt(config, { hash: approve1hash });
+    } else {
+      console.log("Token 0 için onay gerekli değil.");
+    }
 
     if (BigInt(allowance2) === BigInt(0)) {
       console.log("Token 1 için onay gerekli.");

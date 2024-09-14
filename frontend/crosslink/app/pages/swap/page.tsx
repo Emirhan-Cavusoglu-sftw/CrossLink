@@ -164,10 +164,10 @@ const Swap = () => {
 
     const swapAddress = "0x540bFc2FB3B040761559519f9F44690812f3514e";
     try {
-      // const allowance1 = await getAllowance(
-      //   selectedPool.args.currency0,
-      //   swapAddress
-      // );
+      const allowance1 = await getAllowance(
+        selectedPool.args.currency0,
+        swapAddress
+      );
       const allowance2 = await getAllowance(
         selectedPool.args.currency1,
         swapAddress
@@ -177,16 +177,16 @@ const Swap = () => {
       let approve2 = true; // Default olarak true, çünkü eğer allowance 0 değilse approval gerekmiyor.
 
       // Allowance kontrolü yap
-      // if (BigInt(allowance1) === BigInt(0)) {
-      //   console.log("Token 1 için onay gerekli.");
-      //   approve1 = await Approve(selectedPool.args.currency0);
-      //   if (!approve1) {
-      //     console.error("Token 1 için onay işlemi başarısız oldu.");
-      //     return;
-      //   }
-      // } else {
-      //   console.log("Token 1 için onay gerekli değil.");
-      // }
+      if (BigInt(allowance1) === BigInt(0)) {
+        console.log("Token 1 için onay gerekli.");
+        approve1 = await Approve(selectedPool.args.currency0);
+        if (!approve1) {
+          console.error("Token 1 için onay işlemi başarısız oldu.");
+          return;
+        }
+      } else {
+        console.log("Token 1 için onay gerekli değil.");
+      }
 
       if (BigInt(allowance2) === BigInt(0)) {
         console.log("Token 2 için onay gerekli.");

@@ -47,7 +47,7 @@ export async function addLiquidity(
       abi: ModifiyLiquidityABI,
       address: "0xc66f440Ee31e3aE0b026972Ad0C6D62DfD27596B",
       functionName: "modifyLiquidity",
-      value: parseEther("0.05"),
+      value: parseEther("0"),
       args: [
         [currency0, currency1, fee, tickSpacing, hooks],
         [

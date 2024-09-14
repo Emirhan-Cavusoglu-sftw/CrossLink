@@ -19,7 +19,7 @@ export async function placeOrder(
   try {
     const placeOrder = await writeContract(config, {
       abi: LimitOrderABI,
-      address: "0xc4Ce623375c814A14490d59A12E948294a875040",
+      address: "0x735F883b29561463ec096670974670EC5Ff5D040",
       functionName: "placeOrder",
       args: [
         [currency0, currency1, fee, tickSpacing, hooks],
@@ -60,7 +60,7 @@ export async function getPositionId(
   try {
     const positionId = await readContract(config, {
       abi: LimitOrderABI,
-      address: "0xc4Ce623375c814A14490d59A12E948294a875040",
+      address: "0x735F883b29561463ec096670974670EC5Ff5D040",
       functionName: "getPositionId",
       args: [
         [
@@ -68,7 +68,7 @@ export async function getPositionId(
           currency1,
           fee,
           tickSpacing,
-          "0xc4Ce623375c814A14490d59A12E948294a875040",
+          "0x735F883b29561463ec096670974670EC5Ff5D040",
         ],
         revertedTick,
         zeroForOne,
@@ -90,7 +90,7 @@ export async function balanceOf(positionId: string) {
   try {
     const balance = await readContract(config, {
       abi: LimitOrderABI,
-      address: "0xc4Ce623375c814A14490d59A12E948294a875040",
+      address: "0x735F883b29561463ec096670974670EC5Ff5D040",
       functionName: "balanceOf",
       args: [account.address, BigInt(positionId)],
     });
@@ -105,7 +105,7 @@ export async function claimableOutputTokens(positionId: string) {
   try {
     const claimableOutputTokens = await readContract(config, {
       abi: LimitOrderABI,
-      address: "0xc4Ce623375c814A14490d59A12E948294a875040",
+      address: "0x735F883b29561463ec096670974670EC5Ff5D040",
       functionName: "claimableOutputTokens",
       args: [BigInt(positionId)],
     });
@@ -131,7 +131,7 @@ export async function redeem(
   try {
     const redeem = await writeContract(config, {
       abi: LimitOrderABI,
-      address: "0xc4Ce623375c814A14490d59A12E948294a875040",
+      address: "0x735F883b29561463ec096670974670EC5Ff5D040",
       functionName: "redeem",
       args: [
         [currency0, currency1, fee, tickSpacing, hooks],
@@ -161,7 +161,7 @@ export async function cancelOrder(
   try {
     const cancelOrder = await writeContract(config, {
       abi: LimitOrderABI,
-      address: "0xc4Ce623375c814A14490d59A12E948294a875040",
+      address: "0x735F883b29561463ec096670974670EC5Ff5D040",
       functionName: "cancelOrder",
       args: [
         [currency0, currency1, fee, tickSpacing, hooks],

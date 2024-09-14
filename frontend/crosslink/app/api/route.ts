@@ -1,13 +1,14 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 import { ethers } from "ethers";
 import { keccak256 } from "ethers/lib/utils";
 import { PoolManagerABI } from "../../utils/poolManagerABI.json";
+import { LimitOrderABI } from "../../utils/limitOrderHookABI.json";
 
 const etherScanApiKey = process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY || "";
 const arbiscanApiKey = process.env.NEXT_PUBLIC_ARBISCAN_API_KEY || "";
 
 const CounterAddress = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
-const SecondAddress = "0xYourSecondContractAddress";
+const SecondAddress = "0x735F883b29561463ec096670974670EC5Ff5D040";
 
 export async function POST(req: Request) {
   try {
@@ -27,7 +28,10 @@ export async function POST(req: Request) {
       apiBaseUrl = "https://api-sepolia.arbiscan.io/api";
       apiKey = arbiscanApiKey;
     } else {
-      return NextResponse.json({ message: "Unsupported chain" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Unsupported chain" },
+        { status: 400 }
+      );
     }
 
     console.log("API Base URL:", apiBaseUrl, "API Key:", apiKey);
@@ -35,9 +39,7 @@ export async function POST(req: Request) {
     let selectedABI, selectedAddress, eventSignature;
 
     if (ABIType === "Initialize") {
-      selectedABI = [
-        "event Initialize(PoolId indexed id, Currency indexed currency1, uint24 fee, int24 tickSpacing, IHooks hooks, uint160 sqrtPriceX96, int24 tick)"
-      ];
+      selectedABI = PoolManagerABI;
       eventSignature = keccak256(
         ethers.utils.toUtf8Bytes(
           "Initialize(bytes32,address,address,uint24,int24,address,uint160,int24)"
@@ -45,9 +47,7 @@ export async function POST(req: Request) {
       );
       selectedAddress = CounterAddress;
     } else if (ABIType === "OrderPlaced") {
-      selectedABI = [
-        "OrderPlaced(address,address,uint24,int24,address,int24,bool,uint256,address)"
-      ];
+      selectedABI = LimitOrderABI;
       eventSignature = keccak256(
         ethers.utils.toUtf8Bytes(
           "OrderPlaced(address,address,uint24,int24,address,int24,bool,uint256,address)"
@@ -55,7 +55,10 @@ export async function POST(req: Request) {
       );
       selectedAddress = SecondAddress;
     } else {
-      return NextResponse.json({ message: "Invalid ABI type" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Invalid ABI type" },
+        { status: 400 }
+      );
     }
 
     console.log("Selected ABI:", selectedABI);
@@ -85,12 +88,13 @@ export async function POST(req: Request) {
               sqrtPriceX96: parsedLog.args[6],
               tick: parsedLog.args[7],
               tickSpacing: parsedLog.args[4],
-            }
+            },
           };
         });
       } else if (ABIType === "OrderPlaced") {
+        let iface2 = new ethers.utils.Interface(LimitOrderABI);
         decodedEvents = logs.map((log: any) => {
-          const parsedLog = iface.parseLog(log);
+          const parsedLog = iface2.parseLog(log);
           return {
             eventName: parsedLog.name,
             args: {
@@ -115,9 +119,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ events: decodedEvents });
     } else {
       console.error("No events found:", data.message);
-      return NextResponse.json({ message: data.message || "No events found" }, { status: 400 });
+      return NextResponse.json(
+        { message: data.message || "No events found" },
+        { status: 400 }
+      );
     }
   } catch (error) {
-    return NextResponse.json({ message: "Error fetching logs", error: (error as any).message }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error fetching logs", error: (error as any).message },
+      { status: 500 }
+    );
   }
 }
