@@ -39,6 +39,9 @@ interface TokenInfo {
 const etherScanApiKey = process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY || "";
 const arbiscanApiKey = process.env.NEXT_PUBLIC_ARBISCAN_API_KEY || "";
 
+const usdc = "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d";
+const arbNative = "0x0000000000000000000000000000000000000000";
+
 const MyPools = () => {
   const router = useRouter();
   const { selectedHook } = useHook();
@@ -56,7 +59,24 @@ const MyPools = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchTokenInfo();
+    const customTokens = [
+      {
+        tokenAddress: usdc,
+        mintedBy: "0xYourAddressHere", // Bu adresi gerektiği gibi ayarlayın
+        name: "USD Coin",
+        symbol: "USDC",
+      },
+      {
+        tokenAddress: arbNative,
+        mintedBy: "0xYourAddressHere", // Bu adresi gerektiği gibi ayarlayın
+        name: "Arbitrum Native",
+        symbol: "ARB",
+      },
+    ];
+  
+    getTokenInfo((fetchedTokens) => {
+      setTokenInfo([...fetchedTokens, ...customTokens]);
+    });
   }, []);
 
   useEffect(() => {

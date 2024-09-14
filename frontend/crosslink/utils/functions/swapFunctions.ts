@@ -20,7 +20,7 @@ export async function swap(
     console.log("sqrtPriceLimitX96 " + sqrtPriceLimitX96);
     const swap = writeContract(config, {
       abi: SwapRouterABI,
-      address: "0xca116c91f47e6c360e80921a83bd6971c6c8f1a4",
+      address: "0x540bFc2FB3B040761559519f9F44690812f3514e",
       functionName: "swap",
       args: [
         [currency0, currency1, fee, tickSpacing, hooks],

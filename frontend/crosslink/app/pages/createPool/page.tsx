@@ -17,6 +17,9 @@ interface TokenInfo {
   symbol: string;
 }
 
+const usdc = "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d";
+const arbNative = "0x0000000000000000000000000000000000000000";
+
 const availableHooks = {
   UniswapV4: "0x0000000000000000000000000000000000000000",
   Nezlobin: "0x7Ce503FC8c2E2531D5aF549bf77f040Ad9c36080",
@@ -34,8 +37,26 @@ const CreatePool = () => {
   const { selectedHook } = useHook();
 
   useEffect(() => {
-    getTokenInfo(setTokenInfo);
+    const customTokens = [
+      {
+        tokenAddress: usdc,
+        mintedBy: "0xYourAddressHere", // Bu adresi gerektiği gibi ayarlayın
+        name: "USD Coin",
+        symbol: "USDC",
+      },
+      {
+        tokenAddress: arbNative,
+        mintedBy: "0xYourAddressHere", // Bu adresi gerektiği gibi ayarlayın
+        name: "Arbitrum Native",
+        symbol: "ARB",
+      },
+    ];
+  
+    getTokenInfo((fetchedTokens) => {
+      setTokenInfo([...fetchedTokens, ...customTokens]);
+    });
   }, []);
+  
 
   useEffect(() => {
     if (selectedHook == "0x7Ce503FC8c2E2531D5aF549bf77f040Ad9c36080") {

@@ -112,6 +112,7 @@ const Swap = () => {
       const data = await response.json();
       console.log("Data: ", data);
       setEvents(data.events);
+      setFilteredEvents(data.events);
     } catch (error) {
       console.error("Error fetching events: ", (error as any).message);
     } finally {
@@ -158,7 +159,7 @@ const Swap = () => {
       return;
     }
 
-    const swapAddress = "0xcA116c91F47E6c360E80921a83bd6971c6C8f1a4";
+    const swapAddress = "0x540bFc2FB3B040761559519f9F44690812f3514e";
     try {
       const allowance1 = await getAllowance(
         selectedPool.args.currency0,
