@@ -33,6 +33,9 @@ interface Event {
   eventName: string;
 }
 
+const arbNative = "0x0000000000000000000000000000000000000000";
+const ccip = "0xA8C0c11bf64AF62CDCA6f93D3769B88BdD7cb93D";
+
 const Swap = () => {
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [selectedToken1, setSelectedToken1] = useState("");
@@ -161,10 +164,10 @@ const Swap = () => {
 
     const swapAddress = "0x540bFc2FB3B040761559519f9F44690812f3514e";
     try {
-      const allowance1 = await getAllowance(
-        selectedPool.args.currency0,
-        swapAddress
-      );
+      // const allowance1 = await getAllowance(
+      //   selectedPool.args.currency0,
+      //   swapAddress
+      // );
       const allowance2 = await getAllowance(
         selectedPool.args.currency1,
         swapAddress
@@ -174,16 +177,16 @@ const Swap = () => {
       let approve2 = true; // Default olarak true, çünkü eğer allowance 0 değilse approval gerekmiyor.
 
       // Allowance kontrolü yap
-      if (BigInt(allowance1) === BigInt(0)) {
-        console.log("Token 1 için onay gerekli.");
-        approve1 = await Approve(selectedPool.args.currency0);
-        if (!approve1) {
-          console.error("Token 1 için onay işlemi başarısız oldu.");
-          return;
-        }
-      } else {
-        console.log("Token 1 için onay gerekli değil.");
-      }
+      // if (BigInt(allowance1) === BigInt(0)) {
+      //   console.log("Token 1 için onay gerekli.");
+      //   approve1 = await Approve(selectedPool.args.currency0);
+      //   if (!approve1) {
+      //     console.error("Token 1 için onay işlemi başarısız oldu.");
+      //     return;
+      //   }
+      // } else {
+      //   console.log("Token 1 için onay gerekli değil.");
+      // }
 
       if (BigInt(allowance2) === BigInt(0)) {
         console.log("Token 2 için onay gerekli.");
@@ -225,7 +228,7 @@ const Swap = () => {
     try {
       const slot = await readContract(config, {
         abi: LiquidiytDeltaABI,
-        address: "0x3635b6d0b150d438163eaf7417812febc4030f2c",
+        address: "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E",
         functionName: "getSlot0",
         args: [
           [
@@ -235,7 +238,7 @@ const Swap = () => {
             selectedPool.args.tickSpacing,
             selectedPool.args.hooks,
           ],
-          "0xccB5a2D19A67a1a5105F674465CAe2c5Ab1496Ac",
+          "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58",
         ],
       });
       console.log(slot);
@@ -264,7 +267,7 @@ const Swap = () => {
         abi: ERC20ABI,
         address: tokenAddress,
         functionName: "approve",
-        args: ["0xca116c91f47e6c360e80921a83bd6971c6c8f1a4", uintMax],
+        args: ["0x540bFc2FB3B040761559519f9F44690812f3514e", uintMax],
       });
       console.log("Approve " + approve);
       return approve;

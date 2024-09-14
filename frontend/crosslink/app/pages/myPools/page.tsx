@@ -39,8 +39,8 @@ interface TokenInfo {
 const etherScanApiKey = process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY || "";
 const arbiscanApiKey = process.env.NEXT_PUBLIC_ARBISCAN_API_KEY || "";
 
-const usdc = "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d";
 const arbNative = "0x0000000000000000000000000000000000000000";
+const ccip = "0xA8C0c11bf64AF62CDCA6f93D3769B88BdD7cb93D";
 
 const MyPools = () => {
   const router = useRouter();
@@ -61,10 +61,10 @@ const MyPools = () => {
   useEffect(() => {
     const customTokens = [
       {
-        tokenAddress: usdc,
+        tokenAddress: ccip,
         mintedBy: "0xYourAddressHere", // Bu adresi gerektiği gibi ayarlayın
-        name: "USD Coin",
-        symbol: "USDC",
+        name: "CCIP-BnM",
+        symbol: "CCIP",
       },
       {
         tokenAddress: arbNative,
@@ -170,7 +170,7 @@ const MyPools = () => {
     try {
       const slot: any[] = await readContract(config, {
         abi: LiquidiytDeltaABI,
-        address: "0x3635b6d0b150d438163eaf7417812febc4030f2c",
+        address: "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E",
         functionName: "getSlot0",
         args: [
           [
@@ -180,7 +180,7 @@ const MyPools = () => {
             events.args.tickSpacing,
             events.args.hooks,
           ],
-          "0xccB5a2D19A67a1a5105F674465CAe2c5Ab1496Ac",
+          "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58",
         ],
       });
       const tick = Number(slot[1]); // Ensure tick is a number

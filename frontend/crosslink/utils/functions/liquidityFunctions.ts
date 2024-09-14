@@ -23,7 +23,7 @@ export async function Approve(tokenAddress: string) {
       abi: ERC20ABI,
       address: tokenAddress,
       functionName: "approve",
-      args: ["0x7b1d96aadfd510b24d46f3371e9b2dfa1963bb11", uintMax],
+      args: ["0xc66f440Ee31e3aE0b026972Ad0C6D62DfD27596B", uintMax],
     });
     console.log("Approve " + approve);
     return approve;
@@ -45,9 +45,9 @@ export async function addLiquidity(
   try {
     const liquidity = await writeContract(config, {
       abi: ModifiyLiquidityABI,
-      address: "0x7b1d96aadfd510b24d46f3371e9b2dfa1963bb11",
+      address: "0xc66f440Ee31e3aE0b026972Ad0C6D62DfD27596B",
       functionName: "modifyLiquidity",
-      value: parseEther("0"),
+      value: parseEther("0.05"),
       args: [
         [currency0, currency1, fee, tickSpacing, hooks],
         [
@@ -65,21 +65,6 @@ export async function addLiquidity(
   }
 }
 
-// export async function addLiquidity() {
-//   try {
-//     const liquidity = await writeContract(config, {
-//       abi: ModifiyLiquidityABI,
-//       address: "0x7b1d96aadfd510b24d46f3371e9b2dfa1963bb11",
-//       functionName: "modifyLiquidity",
-//       value: parseEther("0"),
-//       args: [["0x3e5d5A90D887456f2F6A71214af6aFE1354aB005","0x62ed3d69a79A1C9c014e6cd4eB96eb2dC3db115C",8388608,79228162514264337593543950336,0,10000],[],],
-//     });
-//     console.log("Liquidity " + liquidity);
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }
-
 export async function getLiquidityDelta(
   [currency0, currency1, fee, tickSpacing, hooks]: [
     string,
@@ -93,11 +78,11 @@ export async function getLiquidityDelta(
   token0Amount: string,
   token1Amount: string
 ) {
-  const managerAddress = "0xccB5a2D19A67a1a5105F674465CAe2c5Ab1496Ac";
+  const managerAddress = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
   try {
     const liquidityDelta = await readContract(config, {
       abi: LiquidiytDeltaABI,
-      address: "0x3635b6d0b150d438163eaf7417812febc4030f2c",
+      address: "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E",
       functionName: "read",
       args: [
         [currency0, currency1, fee, tickSpacing, hooks],

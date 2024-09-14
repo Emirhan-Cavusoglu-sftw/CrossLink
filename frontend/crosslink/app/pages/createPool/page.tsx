@@ -17,7 +17,7 @@ interface TokenInfo {
   symbol: string;
 }
 
-const usdc = "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d";
+const ccip = "0xA8C0c11bf64AF62CDCA6f93D3769B88BdD7cb93D";
 const arbNative = "0x0000000000000000000000000000000000000000";
 
 const availableHooks = {
@@ -39,10 +39,10 @@ const CreatePool = () => {
   useEffect(() => {
     const customTokens = [
       {
-        tokenAddress: usdc,
+        tokenAddress: ccip,
         mintedBy: "0xYourAddressHere", // Bu adresi gerektiği gibi ayarlayın
-        name: "USD Coin",
-        symbol: "USDC",
+        name: "CCIP-BnM",
+        symbol: "CCIP",
       },
       {
         tokenAddress: arbNative,
