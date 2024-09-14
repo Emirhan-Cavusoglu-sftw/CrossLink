@@ -32,6 +32,7 @@ contract CrossLimitOrder is BaseHook, ERC1155, CcipTransfer {
     error InvalidOrder();
     error NothingToClaim();
     error NotEnoughToClaim();
+    error UnsupportedToken();
 
     // Constructor
     constructor(
@@ -312,6 +313,7 @@ contract CrossLimitOrder is BaseHook, ERC1155, CcipTransfer {
         if (destinationChainSelector == chainSelector) {
             token.transfer(msg.sender, outputAmount);
         } else {
+            if (Currency.unwrap(token) == address(0)) revert UnsupportedToken();
             transferTokensPayLINK(
                 destinationChainSelector,
                 msg.sender,
