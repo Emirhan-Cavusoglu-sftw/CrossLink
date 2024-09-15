@@ -34,6 +34,7 @@ const CreateToken = () => {
     await createToken(tokenName, tokenSymbol);
     await getTokenInfo(setTokenInfo);
     await getUserTokens(setUserTokens);
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -44,6 +45,7 @@ const CreateToken = () => {
   const handleMintToken = async (tokenAddress: string) => {
     await mintToken(tokenAddress);
     await handleGetBalance(tokenAddress);
+    window.location.reload();
   };
 
   const handleGetBalance = async (tokenAddress: string) => {
@@ -88,76 +90,83 @@ const CreateToken = () => {
   }, [userTokens, tokenInfo]);
 
   return (
-    <div className="flex justify-center items-start mt-8 space-x-8">
+    <div className="flex flex-col md:flex-row justify-center items-start gap-8 p-8 bg-transparent text-white">
       {/* All Tokens Section */}
-      <div className="flex flex-col bg-transparent border-2 border-gray-500 border-opacity-80 shadow-lg shadow-cyan-400 w-[500px] h-[700px] rounded-xl p-4">
-        <h1 className="text-2xl font-bold text-white mb-4">All Tokens</h1>
-        <div className="flex flex-col space-y-2 overflow-y-auto custom-scrollbar h-full">
+      <div className="w-full md:w-[500px] bg-transparent border border-gray-700 rounded-lg shadow-lg">
+        <h2 className="text-2xl font-bold p-4 border-b border-gray-700">
+          All Tokens
+        </h2>
+        <div className="h-[600px] overflow-y-auto custom-scrollbar">
           {tokenInfo.map((token) => (
             <div
               key={token.tokenAddress}
-              className="flex flex-row justify-between items-center bg-gray-800 text-white p-2 rounded-lg"
+              className="flex justify-between items-center p-4 border-b border-gray-700 transition-colors"
             >
               <div>
-                <p>{token.name}</p>
-                <p className="text-gray-400">({token.symbol})</p>
+                <p className="font-semibold">{token.name}</p>
+                <p className="text-gray-400 text-sm">({token.symbol})</p>
               </div>
-              <button
-                className="text-white w-16 h-8 bg-blue-800 hover:bg-blue-950 transition rounded-lg"
+              <motion.button
+                className="px-4 py-2 bg-indigo-800 hover:bg-pink-700 rounded-lg transition-colors w-24"
                 onClick={() => handleMintToken(token.tokenAddress)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 Mint
-              </button>
+              </motion.button>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Create Token and Your Tokens Section */}
-      <div className="flex flex-col bg-transparent border-2 border-gray-500 border-opacity-80 shadow-lg shadow-cyan-400 w-[500px] h-[700px] rounded-xl p-8">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-white">Create Token</h1>
-          <button
-            onClick={() => setCreateTokenPopup(true)}
-            className="text-white opacity-60 text-lg"
-          >
-            ?
-          </button>
-        </div>
-        <div className="flex flex-col mt-4">
-          <input
-            type="text"
-            placeholder="Token Name"
-            className="bg-transparent text-white p-2 border-b border-gray-600"
-            value={tokenName}
-            onChange={(e) => setTokenName(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Token Symbol"
-            className="bg-transparent text-white p-2 mt-4 border-b border-gray-600"
-            value={tokenSymbol}
-            onChange={(e) => setTokenSymbol(e.target.value)}
-          />
-          <motion.button
-            className="bg-blue-800 hover:bg-blue-950 opacity-80 text-white py-2 px-4 rounded-xl mt-4"
-            onClick={handleCreateToken}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.7 }}
-          >
-            Create Token
-          </motion.button>
+      <div className="w-full md:w-[500px] space-y-8">
+        {/* Create Token Section */}
+        <div className="bg-transparent border border-gray-700 rounded-lg shadow-lg p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold">Create Token</h2>
+            <button
+              onClick={() => setCreateTokenPopup(true)}
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              ?
+            </button>
+          </div>
+          <div className="space-y-4">
+            <input
+              type="text"
+              placeholder="Token Name"
+              value={tokenName}
+              onChange={(e) => setTokenName(e.target.value)}
+              className="w-full p-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none "
+            />
+            <input
+              type="text"
+              placeholder="Token Symbol"
+              value={tokenSymbol}
+              onChange={(e) => setTokenSymbol(e.target.value)}
+              className="w-full p-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none"
+            />
+            <motion.button
+              className="w-full py-2 bg-indigo-800 hover:bg-pink-700 rounded-lg transition-colors"
+              onClick={handleCreateToken}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Create Token
+            </motion.button>
+          </div>
         </div>
 
-        <div className="flex flex-col mt-8 h-full">
-          <h1 className="text-2xl font-bold text-white mb-4">Your Tokens</h1>
-          <div className="flex flex-col space-y-2 overflow-y-auto custom-scrollbar h-full">
+        {/* Your Tokens Section */}
+        <div className="bg-transparent border border-gray-700 rounded-lg shadow-lg">
+          <h2 className="text-2xl font-bold p-4 border-b border-gray-700">
+            Your Tokens
+          </h2>
+          <div className="h-[300px] overflow-y-auto custom-scrollbar">
             {userTokens.map((token) => {
               const balance = tokenBalances[token.name];
-
               if (balance !== undefined) {
                 const balanceString = balance.toString();
-
                 const truncatedBalance =
                   balanceString.length > 6
                     ? balanceString.substring(0, 6) + "..."
@@ -166,44 +175,63 @@ const CreateToken = () => {
                 return (
                   <div
                     key={token.name}
-                    className="flex justify-between items-center bg-gray-800 text-white p-2 rounded-lg"
+                    className="flex justify-between items-center p-4 hover:bg-gray-700 hover:rounded-lg transition-colors"
                   >
                     <div>
-                      <p>{token.name}</p>
-                      <p className="text-gray-400">({token.symbol})</p>
+                      <p className="font-semibold">{token.name}</p>
+                      <p className="text-gray-400 text-sm">({token.symbol})</p>
                     </div>
-                    <div>
+                    <div className="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 text-yellow-500 mr-2"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
                       <p>{truncatedBalance}</p>
                     </div>
                   </div>
                 );
               }
-
               return null;
             })}
           </div>
         </div>
-        {createTokenPopup && (
-          <div
-            className="fixed inset-0 flex justify-center items-center  bg-black bg-opacity-50 z-50 "
-            id="popupOverlay"
-            onClick={() => setCreateTokenPopup(false)}
-          >
-            <div className=" bg-blue-800 w-[600px] text-white p-4 rounded-lg z-50 text-xl">
-              <p>
-                In our platform, we have a section where you can create your own
-                tokens or mint existing tokens. This feature is designed to
-                facilitate more robust and realistic testing within the testnet
-                environment. When you mint your first token, you will need to
-                approve it for the hook liquidity router and the swap router,
-                which are integral to the swap hook functionality. This approval
-                is specifically required for the Limit Order Hook, and you’ll
-                see this process in action as you interact with the platform.
-              </p>
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* Create Token Popup */}
+      {createTokenPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-50">
+          <div className="bg-indigo-900 p-6 rounded-xl max-w-lg">
+            <h3 className="text-xl font-bold mb-4">Create Token Information</h3>
+            <p className="text-gray-300 mb-4">
+              In our platform, you can create your own tokens or mint existing
+              tokens. This feature facilitates more robust and realistic testing
+              within the testnet environment. When you mint your first token,
+              you will need to approve it for the hook liquidity router and the
+              swap router, which are integral to the swap hook functionality.
+              This approval is specifically required for the Limit Order Hook,
+              and you&apos;ll see this process in action as you interact with
+              the platform.
+            </p>
+            <motion.button
+              className="w-full py-2 bg-rose-900 rounded-lg transition-colors"
+              onClick={() => setCreateTokenPopup(false)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Close
+            </motion.button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
