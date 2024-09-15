@@ -15,24 +15,22 @@ import {Math} from "v4-periphery/lib/permit2/lib/openzeppelin-contracts/contract
 
 contract Nezlobin is BaseHook {
     using LPFeeLibrary for uint24;
-    uint256 public counter = 3;
     error MustUseDynamicFee();
     IPoolManager public manager;
     uint256 public constant SCALE = 1000;
-    uint256 public constant MULTIPLIER = 750; // 0.75
+    uint256 public constant k = 1; // Ücretin volatiliteye duyarlılığını belirler
     uint24 public constant BASE_FEE = 3000; // 0.03%
     uint24 public constant MIN_FEE = 500; // 0.005%
     uint24 public constant MAX_LP_FEE = 900000;
 
+    mapping(PoolId => uint256[]) public poolTickDifferences;
     mapping(PoolId => uint256) public poolToTimeStamp;
     mapping(PoolId => int24) public poolToTick;
 
-    // Initialize BaseHook parent contract in the constructor
     constructor(IPoolManager _poolManager) BaseHook(_poolManager) {
         manager = _poolManager;
     }
 
-    // Required override function for BaseHook to let the PoolManager know which hooks are implemented
     function getHookPermissions()
         public
         pure
@@ -80,30 +78,36 @@ contract Nezlobin is BaseHook {
         onlyPoolManager
         returns (bytes4, BeforeSwapDelta, uint24)
     {
-        if (block.timestamp - poolToTimeStamp[PoolIdLibrary.toId(key)] > 1) {
-            poolToTimeStamp[PoolIdLibrary.toId(key)] = block.timestamp;
-            int24 currentTick = getCurrentTick(key);
-            int24 tickDeltaSigned = currentTick -
-                poolToTick[PoolIdLibrary.toId(key)];
-            uint24 tickDelta = tickDeltaSigned >= 0
-                ? uint24(tickDeltaSigned)
-                : uint24(int24(-tickDeltaSigned));
-            if (tickDelta == 0) {
-                return (
-                    this.beforeSwap.selector,
-                    BeforeSwapDeltaLibrary.ZERO_DELTA,
-                    0
-                );
-            }
-            uint24 newFee = calculateDynamicFee(key, tickDelta, params);
+        PoolId poolId = PoolIdLibrary.toId(key);
+        int24 currentTick = getCurrentTick(key);
+        int24 previousTick = poolToTick[poolId];
+        int24 tickDifference = currentTick - previousTick;
 
-            poolManager.updateDynamicLPFee(key, newFee);
-            poolToTick[PoolIdLibrary.toId(key)] = currentTick;
-        }
+        // tickDifference'ı int256'ya dönüştürüyoruz
+        int256 tickDiff = int256(tickDifference);
+
+        // Mutlak değerini alıyoruz ve uint256'ya dönüştürüyoruz
+        uint256 absTickDifference = tickDiff >= 0 ? uint256(tickDiff) : uint256(-tickDiff);
+
+        // Tick farkını kaydediyoruz
+        poolTickDifferences[poolId].push(absTickDifference);
+
+        // Varyansı hesaplıyoruz
+        uint256 variance = calculateVariance(poolTickDifferences[poolId]);
+
+        // Ücreti hesaplıyoruz
+        uint256 sqrtVariance = sqrt(variance);
+        uint256 newFee_temp = (uint256(BASE_FEE) * (SCALE + k * sqrtVariance)) / SCALE;
+        uint24 newFee = uint24(Math.min(newFee_temp, uint256(MAX_LP_FEE)));
+
+        // Ücreti güncelliyoruz
+        poolManager.updateDynamicLPFee(key, newFee);
+        poolToTick[poolId] = currentTick;
+
         return (this.beforeSwap.selector, BeforeSwapDeltaLibrary.ZERO_DELTA, 0);
     }
 
-    // Helper Functions
+    // Yardımcı Fonksiyonlar
     function getCurrentTick(PoolKey calldata key) public view returns (int24) {
         PoolId id = PoolIdLibrary.toId(key);
         (, int24 tick, , ) = StateLibrary.getSlot0(manager, id);
@@ -116,33 +120,39 @@ contract Nezlobin is BaseHook {
         return fee;
     }
 
-    function calculateDynamicFee(
-        PoolKey calldata pool,
-        uint24 delta,
-        IPoolManager.SwapParams calldata params
-    ) public view returns (uint24) {
-        uint24 currentFee = getCurrentFee(pool);
-        if (currentFee == 0) currentFee = BASE_FEE;
+    // Varyans hesaplama fonksiyonu
+    function calculateVariance(uint256[] storage data) internal view returns (uint256) {
+        uint256 sum = 0;
+        uint256 squaresSum = 0;
+        uint256 n = data.length;
 
-        uint256 c_temp = (MULTIPLIER * uint256(currentFee)) / SCALE;
-        uint24 c = uint24(Math.min(c_temp, uint256(type(uint24).max)));
+        // Sadece son N değeri kullanabilirsiniz, örneğin son 10 değer
+        uint256 m = n >= 10 ? 10 : n;
+        uint256 start = n >= m ? n - m : 0;
 
-        uint256 beta_temp = uint256(c) * uint256(delta);
-        uint24 beta = uint24(Math.min(beta_temp, uint256(MAX_LP_FEE)));
-
-        uint24 newFee;
-        if (!params.zeroForOne) {
-            uint256 newFee_temp = BASE_FEE + beta;
-            newFee = uint24(Math.min(newFee_temp, uint256(MAX_LP_FEE)));
-        } else {
-            if (beta >= BASE_FEE) {
-                newFee = MIN_FEE;
-            } else {
-                uint256 newFee_temp = BASE_FEE - beta;
-                newFee = uint24(Math.max(newFee_temp, uint256(MIN_FEE)));
-            }
+        for (uint256 i = start; i < n; i++) {
+            sum += data[i];
+            squaresSum += data[i] * data[i];
         }
 
-        return newFee;
+        if (m == 0) {
+            return 0;
+        }
+
+        uint256 mean = sum / m;
+        uint256 variance = (squaresSum / m) - (mean * mean);
+        return variance;
+    }
+
+    // Karekök fonksiyonu
+    function sqrt(uint y) internal pure returns (uint z) {
+        if (y == 0) return 0;
+        else if (y <= 3) return 1;
+        uint x = y / 2 + 1;
+        z = y;
+        while (x < z) {
+            z = x;
+            x = (y / x + x) / 2;
+        }
     }
 }

@@ -64,7 +64,7 @@ contract Swap is Script {
         bool zeroForOne = false;
         IPoolManager.SwapParams memory params = IPoolManager.SwapParams({
             zeroForOne: zeroForOne,
-            amountSpecified: -3 ether,
+            amountSpecified: -30 ether,
             sqrtPriceLimitX96: zeroForOne ? MIN_PRICE_LIMIT : MAX_PRICE_LIMIT // unlimited impact
         });
         console.log(
