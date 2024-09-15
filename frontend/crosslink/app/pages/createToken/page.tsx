@@ -25,17 +25,21 @@ const CreateToken = () => {
   >([]);
   const [createTokenPopup, setCreateTokenPopup] = useState(false);
 
+  // New state to store balances
+  const [tokenBalances, setTokenBalances] = useState<{
+    [key: string]: number;
+  }>({});
+
   const handleCreateToken = async () => {
     await createToken(tokenName, tokenSymbol);
     await getTokenInfo(setTokenInfo);
-
     await getUserTokens(setUserTokens);
   };
 
-  // useEffect(() => {
-  //   getTokenInfo(setTokenInfo);
-  //   getUserTokens(setUserTokens);
-  // }, []);
+  useEffect(() => {
+    getTokenInfo(setTokenInfo);
+    getUserTokens(setUserTokens);
+  }, []);
 
   const handleMintToken = async (tokenAddress: string) => {
     await mintToken(tokenAddress);
@@ -59,6 +63,29 @@ const CreateToken = () => {
     const balance = await getBalance(tokenAddress);
     return Number(balance);
   };
+
+  // useEffect to fetch balances when userTokens or tokenInfo changes
+  useEffect(() => {
+    const fetchBalances = async () => {
+      const balances: { [key: string]: number } = {};
+
+      for (const token of userTokens) {
+        const matchingTokenInfo = tokenInfo.find(
+          (t) => t.name === token.name && t.symbol === token.symbol
+        );
+
+        if (matchingTokenInfo) {
+          const balance = await _handleGetBalance(
+            matchingTokenInfo.tokenAddress
+          );
+          balances[token.name] = balance;
+        }
+      }
+      setTokenBalances(balances);
+    };
+
+    fetchBalances();
+  }, [userTokens, tokenInfo]);
 
   return (
     <div className="flex justify-center items-start mt-8 space-x-8">
@@ -125,18 +152,12 @@ const CreateToken = () => {
         <div className="flex flex-col mt-8 h-full">
           <h1 className="text-2xl font-bold text-white mb-4">Your Tokens</h1>
           <div className="flex flex-col space-y-2 overflow-y-auto custom-scrollbar h-full">
-            {userTokens.map(async (token) => {
-              const matchingTokenInfo = tokenInfo.find(
-                (t) => t.name === token.name && t.symbol === token.symbol
-              );
+            {userTokens.map((token) => {
+              const balance = tokenBalances[token.name];
 
-              if (matchingTokenInfo) {
-                const balanceBigInt = await _handleGetBalance(
-                  matchingTokenInfo.tokenAddress
-                );
-                const balanceString = balanceBigInt.toString(); // Convert BigInt to String
+              if (balance !== undefined) {
+                const balanceString = balance.toString();
 
-                // Truncate the balance string after the 6th character and add '...' if longer
                 const truncatedBalance =
                   balanceString.length > 6
                     ? balanceString.substring(0, 6) + "..."
@@ -148,7 +169,7 @@ const CreateToken = () => {
                     className="flex justify-between items-center bg-gray-800 text-white p-2 rounded-lg"
                   >
                     <div>
-                      <p>{token.name}</p> {/* Display the full token name */}
+                      <p>{token.name}</p>
                       <p className="text-gray-400">({token.symbol})</p>
                     </div>
                     <div>
@@ -158,7 +179,7 @@ const CreateToken = () => {
                 );
               }
 
-              return null; // Return null if no matching token address is found
+              return null;
             })}
           </div>
         </div>
