@@ -11,3 +11,9 @@ evm_version = "cancun"
 optimizer_runs = 800
 via_ir = true 
 ffi = true
+
+
+fs_permissions = [
+    { access = "read", path = "./broadcast" },
+    { access = "read", path = "./reports" },
+]

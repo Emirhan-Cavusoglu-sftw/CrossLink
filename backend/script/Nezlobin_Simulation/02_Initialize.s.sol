@@ -26,9 +26,9 @@ contract PoolInitialize is Script, Deployers {
     using CurrencyLibrary for Currency;
 
     address constant Token0 =
-        address(0x0b48aF34f4c854F5ae1A3D587da471FeA45bAD52);
+        address(0x90118d110B07ABB82Ba8980D1c5cC96EeA810d2C);
     address constant Token1 =
-        address(0xbCF26943C0197d2eE0E5D05c716Be60cc2761508);
+        address(0xC6bA8C3233eCF65B761049ef63466945c362EdD2);
 
     function run() external {
         IPoolManager manager = IPoolManager(
