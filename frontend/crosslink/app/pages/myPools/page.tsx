@@ -203,13 +203,13 @@ const MyPools = () => {
   };
 
   return (
-    <div className="flex justify-center items-center">
-      <div className="flex flex-col justify-center items-center w-[1000px] mt-44">
+    <div className="flex justify-center items-center bg-gradient-to-br from-gray-900 to-blue-900 h-screen">
+      <div className="flex flex-col justify-center items-center w-[1000px]">
         <div className="flex justify-between items-center w-full mb-4">
           <h1 className="text-2xl font-bold text-white">Pools</h1>
           <div>
             <motion.button
-              className="bg-blue-800 hover:bg-blue-950 w-36 opacity-80 text-white py-2 px-4 rounded-xl"
+              className="bg-sky-600 hover:bg-indigo-700 w-36 opacity-80 text-white py-2 px-4 rounded-xl"
               onClick={() => handleNavigation("/pages/createPool")}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
@@ -225,7 +225,7 @@ const MyPools = () => {
           </div>
         </div>
 
-        <div className="bg-transparent border-gray-500 border-opacity-80 border-2 p-6 rounded-lg shadow-lg shadow-cyan-400 w-full overflow-y-auto custom-scrollbar max-h-[400px]">
+        <div className="bg-transparent border-gray-500 border-opacity-80 border-2 p-6 rounded-lg w-full overflow-y-auto custom-scrollbar max-h-[600px]">
           {filteredPools.length > 0 ? (
             <ul className="space-y-2">
               {filteredPools.map((events, index) => {
@@ -240,7 +240,7 @@ const MyPools = () => {
                 return (
                   <li
                     key={index}
-                    className="text-white text-xl bg-gray-800 hover:bg-blue-800 transition p-4 rounded-lg cursor-pointer flex flex-row justify-between "
+                    className="text-white text-xl bg-gray-800 hover:bg-indigo-700 transition p-4 rounded-lg cursor-pointer flex flex-row justify-between "
                     onClick={() => handleNavigationToPool(events)}
                   >
                     <div>

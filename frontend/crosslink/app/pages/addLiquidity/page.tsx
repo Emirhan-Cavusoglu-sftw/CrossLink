@@ -44,7 +44,7 @@ const Liquidity = () => {
   }, [token0, token1, fee, tickSpacing, selectedHook]);
 
   console.log("Token1 " + tokenSymbol1);
-  console.log("Token2 " + tokenSymbol2)
+  console.log("Token2 " + tokenSymbol2);
   console.log("Token0 address " + token0);
   console.log("Token1 address " + token1);
 
@@ -191,49 +191,75 @@ const Liquidity = () => {
   }
 
   return (
-    <div className="flex justify-center items-start bg-transparent mt-16">
-      <div className="bg-neutral-800 p-6 rounded-lg w-[54%] shadow-lg shadow-cyan-400">
-        <div className="mb-4 font-semibold text-3xl text-gray-300 border-b-2 border-cyan-400 ">
-          {tokenSymbol1}/{tokenSymbol2}
+    <div className="flex justify-center items-center bg-gradient-to-br from-gray-900 to-blue-900 min-h-screen p-4">
+      <div className="bg-neutral-900 opacity-80 shadow-xl border border-white border-opacity-20 p-8 rounded-2xl w-full max-w-4xl">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-white">
+            {tokenSymbol1}/{tokenSymbol2}{" "}
+            <span className="text-cyan-400">Pool</span>
+          </h1>
+          <motion.button
+            className="px-6 py-3 bg-sky-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-lg"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setShowPopup(true)}
+          >
+            Add Liquidity
+          </motion.button>
         </div>
-        <div className="mb-4">
-          <h2 className="text-xl font-semibold text-gray-300">
-            Pool ID: {truncateId(poolId, 20)}
-          </h2>
-        </div>
-        <div className="mb-4">
-          <h2 className="text-xl font-semibold text-gray-300">Fee: {cfee}</h2>
-        </div>
-        <div className="mb-4">
-          <h2 className="text-xl font-semibold text-gray-300">
-            Hook Address: {selectedHook}
-          </h2>
-        </div>
-      </div>
-      <div className="bg-neutral-800 p-6 rounded-lg w-[40%] ml-4 shadow-lg shadow-cyan-400 h-[233px]">
-        <motion.button
-          className="w-64 py-3 bg-blue-800 hover:bg-blue-950 text-white font-bold rounded-lg mb-6"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => setShowPopup(true)}
-        >
-          Add Liquidity
-        </motion.button>
-        <button
-          onClick={() => setAddLiquidityInfoPopup(true)}
-          className="ml-8 text-white opacity-60 text-2xl"
-        >
-          ?
-        </button>
-        <div className="mb-4">
-          <h2 className="text-xl font-semibold text-gray-300">
-            Current Tick: {ctick}
-          </h2>
-        </div>
-        <div className="mb-4">
-          <h2 className="text-xl font-semibold text-gray-300">
-            1 {tokenSymbol1} = {tokenSymbol2} {calculatePrice(Number(ctick))}
-          </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div className="bg-neutral-700 p-4 rounded-lg">
+              <h2 className="text-sm font-medium text-gray-400 mb-1">
+                Pool ID
+              </h2>
+              <p className="text-lg font-semibold text-white break-all">
+                {truncateId(poolId, 20)}
+              </p>
+            </div>
+            <div className="bg-neutral-700 p-4 rounded-lg">
+              <h2 className="text-sm font-medium text-gray-400 mb-1">Fee</h2>
+              <p className="text-lg font-semibold text-white break-all">
+                {cfee}
+              </p>
+            </div>
+            <div className="bg-neutral-700 p-4 rounded-lg">
+              <h2 className="text-sm font-medium text-gray-400 mb-1">
+                Hook Address
+              </h2>
+              <p className="text-lg font-semibold text-white break-all">
+                {selectedHook}
+              </p>
+            </div>
+          </div>
+          <div className="space-y-4">
+            <div className="bg-neutral-700 p-4 rounded-lg">
+              <h2 className="text-sm font-medium text-gray-400 mb-1">
+                Current Tick
+              </h2>
+              <p className="text-lg font-semibold text-white break-all">
+                {ctick}
+              </p>
+            </div>
+            <div className="bg-neutral-700 p-4 rounded-lg">
+              <h2 className="text-sm font-medium text-gray-400 mb-1">
+                1 {tokenSymbol1} =
+              </h2>
+              <p className="text-lg font-semibold text-white break-all">
+                {calculatePrice(Number(ctick))} {tokenSymbol2}
+              </p>
+            </div>
+            <div className="flex items-center">
+              <button
+                onClick={() => setAddLiquidityInfoPopup(true)}
+                className="text-cyan-400 hover:text-sky-600 transition flex items-center"
+              >
+                <span className="mr-2">&#9432;</span>
+                <span>Learn about adding liquidity</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -243,10 +269,10 @@ const Liquidity = () => {
           onClick={() => setShowPopup(false)}
         >
           <div
-            className="bg-neutral-800 p-8 rounded-lg shadow-lg w-[600px]"
+            className="bg-neutral-900 shadow-xl border border-white border-opacity-20 p-8 rounded-lg w-[540px]"
             onClick={(e) => e.stopPropagation()} // Stop closing when clicking inside the popup
           >
-            <div className="w-full flex justify-between items-center ">
+            <div className="w-full flex justify-between items-center">
               <h2 className="text-2xl font-bold text-white mb-4">
                 Add Liquidity
               </h2>
@@ -266,7 +292,7 @@ const Liquidity = () => {
                 type="text"
                 value={token0Amount}
                 onChange={(e) => setToken0Amount(e.target.value)}
-                className="w-full px-3 py-2 border rounded"
+                className="w-full px-3 py-2 outline-none bg-neutral-700 text-white border border-neutral-600 rounded-lg"
               />
             </div>
             <div className="mb-4">
@@ -277,7 +303,7 @@ const Liquidity = () => {
                 type="text"
                 value={token1Amount}
                 onChange={(e) => setToken1Amount(e.target.value)}
-                className="w-full px-3 py-2 border rounded"
+                className="w-full px-3 py-2 outline-none bg-neutral-700 text-white border border-neutral-600 rounded-lg"
               />
             </div>
             <div className="mb-4">
@@ -288,7 +314,7 @@ const Liquidity = () => {
                 <button
                   onClick={() => setUsePrice(true)}
                   className={`p-2 rounded-lg text-white w-full ${
-                    usePrice ? "bg-blue-800" : "bg-neutral-700"
+                    usePrice ? "bg-sky-600 " : "bg-neutral-700"
                   }`}
                 >
                   Price
@@ -296,7 +322,7 @@ const Liquidity = () => {
                 <button
                   onClick={() => setUsePrice(false)}
                   className={`p-2 rounded-lg text-white w-full ${
-                    !usePrice ? "bg-blue-800" : "bg-neutral-700"
+                    !usePrice ? "bg-sky-600 " : "bg-neutral-700"
                   }`}
                 >
                   Tick
@@ -309,7 +335,7 @@ const Liquidity = () => {
                     <input
                       type="text"
                       onChange={(e) => setLowerPrice(e.target.value)}
-                      className="w-full px-3 py-2 border rounded"
+                      className="w-full px-3 py-2 outline-none bg-neutral-700 text-white border border-neutral-600 rounded-lg"
                     />
                   </div>
                   <div className="mb-4">
@@ -317,7 +343,7 @@ const Liquidity = () => {
                     <input
                       type="text"
                       onChange={(e) => setUpperPrice(e.target.value)}
-                      className="w-full px-3 py-2 border rounded"
+                      className="w-full px-3 py-2 outline-none bg-neutral-700 text-white border border-neutral-600 rounded-lg"
                     />
                   </div>
                 </>
@@ -327,7 +353,10 @@ const Liquidity = () => {
                     <label className="block text-gray-300">Lower Tick</label>
                     <input
                       type="number"
-                      step={1}
+                      style={{
+                        MozAppearance: "textfield",
+                        WebkitAppearance: "none",
+                      }}
                       onKeyDown={(e) => {
                         if (e.key === "." || e.key === ",") {
                           e.preventDefault(); // Nokta veya virgül basıldığında engellenir
@@ -338,14 +367,27 @@ const Liquidity = () => {
                           String(getLowerUsableTick(e.target.value))
                         )
                       }
-                      className="w-full px-3 py-2 border rounded"
+                      className="w-full px-3 py-2 outline-none bg-neutral-700 text-white border border-neutral-600 rounded-lg"
                     />
+                    <style jsx>{`
+                      input[type="number"]::-webkit-inner-spin-button,
+                      input[type="number"]::-webkit-outer-spin-button {
+                        -webkit-appearance: none;
+                        margin: 0;
+                      }
+                      input[type="number"] {
+                        -moz-appearance: textfield;
+                      }
+                    `}</style>
                   </div>
                   <div className="mb-4">
                     <label className="block text-gray-300">Upper Tick</label>
                     <input
                       type="number"
-                      step={1}
+                      style={{
+                        MozAppearance: "textfield",
+                        WebkitAppearance: "none",
+                      }}
                       onKeyDown={(e) => {
                         if (e.key === "." || e.key === ",") {
                           e.preventDefault(); // Nokta veya virgül basıldığında engellenir
@@ -356,14 +398,24 @@ const Liquidity = () => {
                           String(getLowerUsableTick(e.target.value))
                         )
                       }
-                      className="w-full px-3 py-2 border rounded"
+                      className="w-full px-3 py-2 outline-none bg-neutral-700 text-white border border-neutral-600 rounded-lg"
                     />
+                    <style jsx>{`
+                      input[type="number"]::-webkit-inner-spin-button,
+                      input[type="number"]::-webkit-outer-spin-button {
+                        -webkit-appearance: none;
+                        margin: 0;
+                      }
+                      input[type="number"] {
+                        -moz-appearance: textfield;
+                      }
+                    `}</style>
                   </div>
                 </>
               )}
             </div>
             <motion.button
-              className="w-full py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors duration-300"
+              className="w-full py-3 bg-sky-600 hover:bg-indigo-700 text-white font-bold rounded-lg transition-colors duration-300"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleAddLiquidity}
@@ -373,29 +425,41 @@ const Liquidity = () => {
           </div>
         </div>
       )}
+
       {addLiquidityInfoPopup && (
         <div
-          className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50 "
-          id="popupOverlay"
+          className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-75 z-50"
           onClick={() => setAddLiquidityInfoPopup(false)}
         >
-          <div className=" bg-blue-800 w-[600px] text-white p-4 rounded-lg z-50 text-xl">
-            <p>
-              To add liquidity, first, navigate to the “Explorer” section, where
-              pools will be displayed based on the active mode. By clicking on
-              the pool you are interested in, you can view its details and
-              proceed to add liquidity. In the liquidity form, you can set your
-              desired price range, which can be specified either as ticks or as
-              a price, depending on your preference. Additionally, you can
-              adjust the amount of each token you want to contribute to the
-              pool. This setup allows for flexible and precise liquidity
+          <div
+            className="bg-neutral-800 w-full max-w-2xl text-white p-8 rounded-2xl shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold">Adding Liquidity</h2>
+              <button
+                className="text-gray-400 hover:text-white text-2xl"
+                onClick={() => setAddLiquidityInfoPopup(false)}
+              >
+                &times;
+              </button>
+            </div>
+            <p className="text-lg leading-relaxed">
+              To add liquidity, first, navigate to the &apos;Explorer&apos;
+              section, where pools will be displayed based on the active mode.
+              By clicking on the pool you are interested in, you can view its
+              details and proceed to add liquidity. In the liquidity form, you
+              can set your desired price range, which can be specified either as
+              ticks or as a price, depending on your preference. Additionally,
+              you can adjust the amount of each token you want to contribute to
+              the pool. This setup allows for flexible and precise liquidity
               provision, tailored to your strategy.
             </p>
-          </div>{" "}
+          </div>
         </div>
       )}
     </div>
   );
-}
+};
 
-export default Liquidity
+export default Liquidity;

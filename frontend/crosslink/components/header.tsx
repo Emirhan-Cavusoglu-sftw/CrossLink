@@ -41,11 +41,11 @@ const Header = () => {
   };
 
   return (
-    <header className="w-full flex justify-between items-center py-4 px-8 bg-transparent">
-      <div className="flex space-x-8">
-        <Link href={"/"}>
+    <header className="fixed top-0 left-0 w-full flex justify-between items-center py-4 px-8 bg-transparent z-50">
+      <div className="flex space-x-4">
+        <Link href="/" onClick={() => setSelectedPage("")}>
           <div className="flex flex-row space-x-2">
-            <Image src={"/icon.png"} width={50} height={40} alt="InfHook" />
+            <Image src="/icon.png" width={50} height={40} alt="InfHook" />
             <h1 className="text-cyan-400 flex pt-[7px] text-xl">CrossLink</h1>
           </div>
         </Link>
@@ -81,7 +81,7 @@ const Header = () => {
           rel="noopener noreferrer"
         >
           <button className="text-white hover:text-gray-400 transition pt-2">
-            Documentation
+            Doc
           </button>
         </Link>
         {isLimitOrderSelected && (

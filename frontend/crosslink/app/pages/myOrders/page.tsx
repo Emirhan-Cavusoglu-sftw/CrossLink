@@ -18,7 +18,8 @@ import { getTokenInfo } from "../../../utils/functions/createTokenFunctions";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getAccount } from "@wagmi/core";
-import { hexToNumber } from 'viem'
+import { hexToNumber } from "viem";
+import Image from "next/image";
 
 interface Event {
   args: {
@@ -73,7 +74,10 @@ const MyOrders = () => {
   const router = useRouter();
   const [symbolData, setSymbolData] = useState([]);
   const [limitOrderInfoPopup, setLimitOrderInfoPopup] = useState(false);
-  const [destinationChainSelector, setDestinationChainSelector] = useState("16015286601757825753");
+  const [destinationChainSelector, setDestinationChainSelector] = useState(
+    "16015286601757825753"
+  );
+  const [selectedLogo, setSelectedLogo] = useState("eth");
 
   console.log("Selected Hook:", selectedHook);
 
@@ -161,7 +165,7 @@ const MyOrders = () => {
     }
   };
 
- const fetchOrderEvents = async () => {
+  const fetchOrderEvents = async () => {
     try {
       const response = await fetch("/api", {
         method: "POST",
@@ -216,7 +220,6 @@ const MyOrders = () => {
     } finally {
     }
   };
-
 
   function convertPriceToTick(price: string): number {
     const priceValue = parseFloat(price);
@@ -294,6 +297,7 @@ const MyOrders = () => {
           amountIn
         );
         console.log("Order Placed:", result);
+        await refetch2();
       } catch (error) {
         console.error("Error placing order:", error);
       }
@@ -327,7 +331,6 @@ const MyOrders = () => {
     }
   }
 
- 
   async function handleRedeem(order: Order) {
     console.log("Amount: ", hexToNumber(String(order.args.inputAmount.hex)));
     try {
@@ -344,6 +347,7 @@ const MyOrders = () => {
         hexToNumber(String(order.args.inputAmount.hex)),
         Number(destinationChainSelector)
       );
+      await refetch2();
     } catch (error) {
       console.error("Error redeeming order:", error);
     }
@@ -362,6 +366,7 @@ const MyOrders = () => {
         order.args.tickToSellAt,
         order.args.zeroForOne
       );
+      await refetch2();
     } catch (error) {
       console.error("Error canceling order:", error);
     }
@@ -409,228 +414,286 @@ const MyOrders = () => {
     }
   }
 
-  return (
-    <div className="flex flex-row justify-center items-center bg-transparent space-x-48 mt-24">
-      <div className="flex flex-col bg-neutral-800 w-[500px] h-[600px] rounded-2xl items-center pt-2 px-6 border-2 border-gray-500 border-opacity-80 shadow-lg shadow-cyan-400">
-        <div className="flex items-center mb-8">
-          <h1 className="text-white text-3xl">Place Order</h1>
-          <button
-            className="ml-4 text-white text-2xl flex pt-1"
-            onClick={() => setLimitOrderInfoPopup(true)}
-          >
-            ?
-          </button>
-        </div>
-        <div className="w-full">
-          <h1 className="text-white text-lg mb-2">Select Pool</h1>
-          <select
-            onChange={(e) => {
-              const selectedIndex = e.target.value;
-              setSelectedEvent(events[parseInt(selectedIndex)]);
-            }}
-            className="mb-4 p-3 rounded bg-neutral-700 text-white w-full"
-          >
-            <option value="">Select a Pool</option>
-            {symbolData.map((data, index) => (
-              <option key={index} value={index}>
-                {`Pool: ${data.symbol0} / ${data.symbol1} - Fee: ${data.fee}`}
-              </option>
-            ))}
-          </select>
-        </div>
+  const handleLogoToggle = () => {
+    if (selectedLogo === "eth") {
+      setSelectedLogo("arb");
+      setDestinationChainSelector("3478487238524512106");
+    } else {
+      setSelectedLogo("eth");
+      setDestinationChainSelector("16015286601757825753");
+    }
+  };
 
-        <div className="w-full mb-4">
-          <h1 className="text-white text-lg mb-2">Tick or Price</h1>
-          <div className="flex space-x-4 mb-4">
+  return (
+    <>
+      <div className="flex flex-row justify-center items-center bg-gradient-to-br from-gray-900 to-blue-900 space-x-48 h-screen">
+        <div className="flex flex-col bg-neutral-900 opacity-80 w-[500px] h-[620px] pt-4 px-6 rounded-3xl shadow-xl p-8 border border-white border-opacity-20">
+          <div className="flex items-center justify-between mb-8 ">
+            <h1 className="text-white text-3xl">Place Order</h1>
             <button
-              onClick={() => setUsePrice(false)}
-              className={`p-3 rounded-lg text-white w-full ${
-                !usePrice ? "bg-blue-800" : "bg-neutral-700"
-              }`}
+              className="ml-4 text-white text-2xl flex pt-1"
+              onClick={() => setLimitOrderInfoPopup(true)}
             >
-              Tick
-            </button>
-            <button
-              onClick={() => setUsePrice(true)}
-              className={`p-3 rounded-lg text-white w-full ${
-                usePrice ? "bg-blue-800" : "bg-neutral-700"
-              }`}
-            >
-              Price
+              ?
             </button>
           </div>
-          {!usePrice ? (
-            <>
+          <div className="w-full">
+            <h1 className="text-white text-lg mb-2">Select Pool</h1>
+            <select
+              onChange={(e) => {
+                const selectedIndex = e.target.value;
+                setSelectedEvent(events[parseInt(selectedIndex)]);
+              }}
+              className="mb-4 p-3 rounded bg-white bg-opacity-10 border border-white border-opacity-20 text-white w-full"
+            >
+              <option className="text-white bg-gray-700" value="">
+                Select a Pool
+              </option>
+              {symbolData.map((data, index) => (
+                <option
+                  className="text-white bg-gray-700"
+                  key={index}
+                  value={index}
+                >
+                  {`Pool: ${data.symbol0} / ${data.symbol1} - Fee: ${data.fee}`}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="w-full mb-4">
+            <h1 className="text-white text-lg mb-2">Tick or Price</h1>
+            <div className="flex space-x-4 mb-4">
+              <button
+                onClick={() => setUsePrice(false)}
+                className={`p-3 rounded-lg text-white w-full ${
+                  !usePrice ? "bg-blue-800" : "bg-white bg-opacity-10"
+                }`}
+              >
+                Tick
+              </button>
+              <button
+                onClick={() => setUsePrice(true)}
+                className={`p-3 rounded-lg text-white w-full ${
+                  usePrice ? "bg-blue-800" : "bg-white bg-opacity-10"
+                }`}
+              >
+                Price
+              </button>
+            </div>
+            {!usePrice ? (
+              <>
+                <input
+                  type="number"
+                  placeholder="Enter Tick"
+                  onChange={(e) =>
+                    setTickToSellAt(
+                      Number(getLowerUsableTick(e.target.value, selectedEvent))
+                    )
+                  }
+                  className="p-3 rounded bg-white bg-opacity-10 text-white w-full outline-none"
+                  style={{
+                    MozAppearance: "textfield",
+                    WebkitAppearance: "none",
+                  }}
+                />
+                <style jsx>{`
+                  input[type="number"]::-webkit-inner-spin-button,
+                  input[type="number"]::-webkit-outer-spin-button {
+                    -webkit-appearance: none;
+                    margin: 0;
+                  }
+                  input[type="number"] {
+                    -moz-appearance: textfield;
+                  }
+                `}</style>
+              </>
+            ) : (
               <input
-                type="number"
-                placeholder="Enter Tick"
-                onChange={(e) =>
-                  setTickToSellAt(
-                    Number(getLowerUsableTick(e.target.value, selectedEvent))
-                  )
-                }
-                className="p-3 rounded bg-neutral-700 text-white w-full"
-                style={{
-                  MozAppearance: "textfield",
-                  WebkitAppearance: "none",
+                type="text"
+                placeholder="Enter Price"
+                value={price}
+                onChange={(e) => {
+                  const inputPrice = e.target.value;
+                  if (parseFloat(inputPrice) >= 0 || inputPrice === "") {
+                    setPrice(inputPrice);
+                  }
                 }}
+                className="p-3 rounded bg-white bg-opacity-10 text-white w-full outline-none"
               />
-              <style jsx>{`
-                input[type="number"]::-webkit-inner-spin-button,
-                input[type="number"]::-webkit-outer-spin-button {
-                  -webkit-appearance: none;
-                  margin: 0;
-                }
-                input[type="number"] {
-                  -moz-appearance: textfield;
-                }
-              `}</style>
-            </>
-          ) : (
+            )}
+          </div>
+
+          <div className="w-full mb-4">
+            <h1 className="text-white text-lg mb-2">Amount</h1>
             <input
               type="text"
-              placeholder="Enter Price"
-              value={price}
-              onChange={(e) => {
-                const inputPrice = e.target.value;
-                if (parseFloat(inputPrice) >= 0 || inputPrice === "") {
-                  setPrice(inputPrice);
-                }
-              }}
-              className="p-3 rounded bg-neutral-700 text-white w-full"
+              placeholder="Enter Amount"
+              value={amountIn}
+              onChange={(e) => setAmountIn(e.target.value)}
+              className="p-3 rounded bg-white bg-opacity-10 text-white w-full outline-none"
             />
-          )}
-        </div>
+          </div>
 
-        <div className="w-full mb-4">
-          <h1 className="text-white text-lg mb-2">Amount</h1>
-          <input
-            type="text"
-            placeholder="Enter Amount"
-            value={amountIn}
-            onChange={(e) => setAmountIn(e.target.value)}
-            className="p-3 rounded bg-neutral-700 text-white w-full"
-          />
-        </div>
+          <div className="w-full flex space-x-4 mb-8">
+            <button
+              onClick={() => setZeroForOne(false)}
+              className={`p-3 rounded-lg text-white w-full ${
+                !zeroForOne ? "bg-green-500" : "bg-white bg-opacity-10"
+              }`}
+            >
+              Buy
+            </button>
+            <button
+              onClick={() => setZeroForOne(true)}
+              className={`p-3 rounded-lg text-white w-full ${
+                zeroForOne ? "bg-red-500" : "bg-white bg-opacity-10"
+              }`}
+            >
+              Sell
+            </button>
+          </div>
 
-        <div className="w-full flex space-x-4 mb-8">
           <button
-            onClick={() => setZeroForOne(false)}
-            className={`p-3 rounded-lg text-white w-full ${
-              !zeroForOne ? "bg-green-500" : "bg-neutral-700"
-            }`}
+            onClick={handlePlaceOrder}
+            className="p-3 rounded-lg bg-blue-800 hover:bg-blue-950 transition text-white w-full"
           >
-            Buy
-          </button>
-          <button
-            onClick={() => setZeroForOne(true)}
-            className={`p-3 rounded-lg text-white w-full ${
-              zeroForOne ? "bg-red-500" : "bg-neutral-700"
-            }`}
-          >
-            Sell
+            Place Order
           </button>
         </div>
 
-        <button
-          onClick={handlePlaceOrder}
-          className="p-3 rounded-lg bg-blue-800 hover:bg-blue-950 transition text-white w-full"
-        >
-          Place Order
-        </button>
+        <div className="flex flex-col bg-neutral-900 opacity-80 w-[500px] h-[620px] rounded-3xl items-center pt-2 shadow-xl border border-white border-opacity-20">
+          <div className="flex justify-between mb-8">
+            <h1 className="text-white text-3xl pr-80">Orders</h1>
+            <button
+              onClick={handleLogoToggle}
+              className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-700 hover:bg-gray-600"
+            >
+              {selectedLogo === "eth" ? (
+                <Image
+                src={"/ethLogo.png"}
+                width={80}
+                height={20}
+                alt="ethLogo"
+                /> // Eth logosu
+              ) : (
+                <Image
+                src={"/arbLogo.png"}
+                width={20}
+                height={10}
+                alt="ethLogo"
+                /> // Arb logosu
+              )}
+            </button>
+          </div>
+
+          <ul className="space-y-4 overflow-y-auto max-h-[500px] pr-2 custom-scrollbar">
+            {orders
+              .filter((order) => order.balance > 0)
+              .map((order, index) => (
+                <li
+                  key={index}
+                  className="bg-white bg-opacity-5 rounded-xl p-4 space-y-4"
+                >
+                  <p className="text-white">
+                    {`${index + 1}. Order ID: ${truncateString(
+                      String(order.positionId),
+                      10
+                    )}, Balance: ${truncateString(String(order.balance), 10)}`}
+                  </p>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => handleRedeem(order)}
+                      disabled={order.claimableTokens <= 0}
+                      className={`flex-1 py-2 px-4 rounded-lg text-white font-medium transition-colors ${
+                        order.claimableTokens > 0
+                          ? "bg-green-600 hover:bg-green-700"
+                          : "bg-gray-600 cursor-not-allowed"
+                      }`}
+                    >
+                      Redeem
+                    </button>
+                    <button
+                      onClick={() => handleCancelOrder(order)}
+                      className="flex-1 py-2 px-4 rounded-lg bg-red-600 hover:bg-red-700 transition-colors text-white font-medium"
+                    >
+                      Cancel Order
+                    </button>
+                  </div>
+                </li>
+              ))}
+          </ul>
+        </div>
       </div>
 
-      <div className="flex flex-col bg-neutral-800 w-[500px] h-[600px] rounded-2xl items-center pt-2 border-2 border-gray-500 border-opacity-80 shadow-lg shadow-cyan-400">
-        <h1 className="text-white text-3xl mb-4">Orders</h1>
-        <ul className="text-white w-full px-6 space-y-6 overflow-y-auto custom-scrollbar max-h-[600px]">
-          {orders
-            .filter((order) => order.balance > 0) 
-            .map((order, index) => (
-              <li
-                key={index}
-                className="mb-4 p-4 bg-gray-800 rounded-xl space-x-2 "
-              >
-                <p className="mb-2">
-                  {`${index + 1}. Order ID: ${truncateString(
-                    String(order.positionId),
-                    10
-                  )}, Balance: ${truncateString(String(order.balance), 10)}`}
-                </p>
-                <button
-                  onClick={() => handleRedeem(order)}
-                  disabled={order.claimableTokens <= 0}
-                  className={`mt-2 p-2 rounded-lg text-white w-48 ${
-                    order.claimableTokens > 0
-                      ? "bg-green-500"
-                      : "bg-neutral-800 cursor-not-allowed"
-                  }`}
-                >
-                  Redeem
-                </button>
-                <button
-                  onClick={() => handleCancelOrder(order)}
-                  className="mt-2 p-2 rounded-lg bg-red-500 text-white w-48"
-                >
-                  Cancel Order
-                </button>
-              </li>
-            ))}
-        </ul>
-      </div>
       {limitOrderInfoPopup && (
         <div
-          className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50 "
-          id="popupOverlay"
+          className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50"
           onClick={() => setLimitOrderInfoPopup(false)}
         >
-          <div className=" bg-blue-800 w-[600px] text-white p-4 rounded-lg z-50">
-            <p>
-              <strong># Testing Limit Order Hook</strong>
-              <br />
-              <br />
-              In the Limit Order test, you will follow a similar process to the
-              Nezlobin test but with some key differences:
-              <br />
-              <br />
-              <strong>1. Create a Pool:</strong> First, create a pool by
-              selecting the Limit Order hook. Set the dynamic fee to 3000 and
-              tick spacing to 100. In the price ratio section, choose a 1:1
-              ratio.
-              <br />
-              <br />
-              <strong>2. Add Liquidity:</strong> After creating the pool, add
-              liquidity with the same parameters used in the Nezlobin test:
-              5000, 5000, -887200, and 887200.
-              <br />
-              <br />
-              <strong>3. Place an Order:</strong> Next, go to the “My Orders”
-              section while in Limit Order mode. Place an order with the
-              following instructions: “Sell 20 tokens when the tick reaches
-              100.” After placing the order, you’ll see it listed in the orders
-              section. Notice that the “Redeem” button is disabled since the
-              order hasn’t been executed yet, but you can cancel the order at
-              this point.
-              <br />
-              <br />
-              <strong>4. Trigger the Order:</strong> Now, act as another user
-              and perform a swap in the opposite direction of the pool pair
-              (e.g., if the pool is USDC/WEDU, swap in the WEDU/USDC direction).
-              Execute a swap of 200 tokens, which should push the tick to 100,
-              triggering the order you placed.
-              <br />
-              <br />
-              <strong>5. Redeem:</strong> After the swap, return to the “My
-              Orders” section. You will now see that the “Redeem” button has
-              turned green, indicating that your order has been executed. At
-              this point, you can redeem the order, while the “Cancel Order”
-              option will no longer be available. The Limit Order hook has
-              matched your order by executing a corresponding swap when the tick
-              reached 100.
-            </p>
+          <div
+            className="bg-gray-800 max-w-2xl text-white p-8 rounded-2xl m-4 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setLimitOrderInfoPopup(false)}
+              className="absolute top-4 right-4 text-white hover:text-gray-300"
+            >
+              <p className="text-2xl">X</p>
+            </button>
+            <h2 className="text-2xl font-bold mb-4">
+              Testing Limit Order Hook
+            </h2>
+            <div className="space-y-4">
+              <p>
+                In the Limit Order test, you will follow a similar process to
+                the Nezlobin test but with some key differences:
+              </p>
+              <ol className="list-decimal list-inside space-y-2">
+                <li>
+                  <strong>Create a Pool:</strong> First, create a pool by
+                  selecting the Limit Order hook. Set the dynamic fee to 3000
+                  and tick spacing to 100. In the price ratio section, choose a
+                  1:1 ratio.
+                </li>
+                <li>
+                  <strong>Add Liquidity:</strong> After creating the pool, add
+                  liquidity with the same parameters used in the Nezlobin test:
+                  5000, 5000, -887200, and 887200.
+                </li>
+                <li>
+                  <strong>Place an Order:</strong> Next, go to the &quot;My
+                  Orders&quot; section while in Limit Order mode. Place an order
+                  with the following instructions: &quot;Sell 20 tokens when the
+                  tick reaches 100.&quot; After placing the order, you&apos;ll
+                  see it listed in the orders section. Notice that the
+                  &quot;Redeem&quot; button is disabled since the order
+                  hasn&apos;t been executed yet, but you can cancel the order at
+                  this point.
+                </li>
+                <li>
+                  <strong>Trigger the Order:</strong> Now, act as another user
+                  and perform a swap in the opposite direction of the pool pair
+                  (e.g., if the pool is USDC/WEDU, swap in the WEDU/USDC
+                  direction). Execute a swap of 200 tokens, which should push
+                  the tick to 100, triggering the order you placed.
+                </li>
+                <li>
+                  <strong>Redeem:</strong> After the swap, return to the
+                  &quot;My Orders&quot; section. You will now see that the
+                  &quot;Redeem&quot; button has turned green, indicating that
+                  your order has been executed. At this point, you can redeem
+                  the order, while the &quot;Cancel Order&quot; option will no
+                  longer be available. The Limit Order hook has matched your
+                  order by executing a corresponding swap when the tick reached
+                  100.
+                </li>
+              </ol>
+            </div>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
