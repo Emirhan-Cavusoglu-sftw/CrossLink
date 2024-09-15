@@ -118,12 +118,12 @@ const CreatePool = () => {
   }
 
   return (
-    <div className="flex justify-center items-center text-center">
-      <div className="flex flex-col bg-transparent border-2 border-gray-500 border-opacity-80 shadow-lg shadow-cyan-400 w-[850px] h-[600px] mt-16 rounded-xl p-8 items-center ">
+    <div className="flex justify-center items-center text-center bg-gradient-to-br from-gray-900 to-blue-900 h-screen">
+      <div className="flex flex-col bg-neutral-900 opacity-80 border-2 border-gray-500 border-opacity-80 w-[850px] h-[600px] mt-16 rounded-xl p-8 items-center ">
         <h2 className="text-white text-3xl mb-6">Create a New Pool</h2>
 
         <select
-          className="mb-4 p-3 bg-gray-800 text-white w-[800px] rounded-lg border border-gray-500"
+          className="mb-4 p-3 bg-neutral-700 text-white w-[800px] rounded-lg border border-gray-500 outline-none"
           value={currency0}
           onChange={(e) => setCurrency0(e.target.value)}
         >
@@ -136,7 +136,7 @@ const CreatePool = () => {
         </select>
 
         <select
-          className="mb-4 p-3 bg-gray-800 text-white w-[800px] rounded-lg border border-gray-600"
+          className="mb-4 p-3 bg-neutral-700 text-white w-[800px] rounded-lg border border-gray-600 outline-none"
           value={currency1}
           onChange={(e) => setCurrency1(e.target.value)}
         >
@@ -149,7 +149,7 @@ const CreatePool = () => {
         </select>
 
         <input
-          className="mb-4 p-3 bg-gray-800 text-white w-[800px] rounded-lg border border-gray-600"
+          className="mb-4 p-3 bg-neutral-700 text-white w-[800px] rounded-lg border border-gray-600 outline-none"
           type="number"
           placeholder="Fee"
           value={fee}
@@ -171,7 +171,7 @@ const CreatePool = () => {
         `}</style>
 
         <input
-          className="mb-4 p-3 bg-gray-800 text-white w-[800px] rounded-lg border border-gray-600"
+          className="mb-4 p-3 bg-neutral-700 text-white w-[800px] rounded-lg border border-gray-600 outline-none"
           type="number"
           placeholder="Tick Spacing"
           value={tickSpacing}
@@ -193,7 +193,7 @@ const CreatePool = () => {
         `}</style>
 
         <select
-          className="mb-4 p-3 bg-gray-800 text-white w-[800px] rounded-lg border border-gray-600"
+          className="mb-4 p-3 bg-neutral-700 text-white w-[800px] rounded-lg border border-gray-600 outline-none"
           value={selectedHookk}
           onChange={(e) => setSelectedHook(e.target.value)}
         >
@@ -206,7 +206,7 @@ const CreatePool = () => {
         </select>
 
         <select
-          className="mb-4 p-3 bg-gray-800 text-white w-[800px] rounded-lg border border-gray-600"
+          className="mb-4 p-3 bg-neutral-700 text-white w-[800px] rounded-lg border border-gray-600 outline-none"
           value={sqrtPriceX96}
           onChange={(e) => setSqrtPriceX96(e.target.value)}
         >
@@ -219,7 +219,7 @@ const CreatePool = () => {
         </select>
 
         <motion.button
-          className="mt-4 p-3 text-white rounded-lg w-[400px] text-xl bg-blue-800 hover:bg-blue-950 "
+          className="mt-4 p-3 text-white rounded-lg w-[400px] text-xl bg-sky-600 hover:bg-indigo-700"
           onClick={handleSubmit}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.7 }}
