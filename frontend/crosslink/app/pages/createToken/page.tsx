@@ -92,22 +92,22 @@ const CreateToken = () => {
   return (
     <div className="flex flex-col md:flex-row justify-center items-start gap-8 p-8 bg-transparent text-white">
       {/* All Tokens Section */}
-      <div className="w-full md:w-[500px] bg-transparent border border-gray-700 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold p-4 border-b border-gray-700">
+      <div className="w-full md:w-[500px] bg-white bg-opacity-10 backdrop-blur-lg shadow-xl border border-white border-opacity-20 rounded-xl">
+        <h2 className="text-2xl font-bold p-4 border-b border-white border-opacity-45">
           All Tokens
         </h2>
         <div className="h-[600px] overflow-y-auto custom-scrollbar">
           {tokenInfo.map((token) => (
             <div
               key={token.tokenAddress}
-              className="flex justify-between items-center p-4 border-b border-gray-700 transition-colors"
+              className="flex justify-between items-center p-4 border-b border-white border-opacity-45 transition-colors"
             >
               <div>
                 <p className="font-semibold">{token.name}</p>
                 <p className="text-gray-400 text-sm">({token.symbol})</p>
               </div>
               <motion.button
-                className="px-4 py-2 bg-indigo-800 hover:bg-pink-700 rounded-lg transition-colors w-24"
+                className="px-4 py-2 bg-sky-600 hover:bg-indigo-700 rounded-lg transition-colors w-24"
                 onClick={() => handleMintToken(token.tokenAddress)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -121,7 +121,7 @@ const CreateToken = () => {
 
       <div className="w-full md:w-[500px] space-y-8">
         {/* Create Token Section */}
-        <div className="bg-transparent border border-gray-700 rounded-lg shadow-lg p-6">
+        <div className="bg-white bg-opacity-10 backdrop-blur-lg shadow-xl border border-white border-opacity-20 rounded-xl p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold">Create Token</h2>
             <button
@@ -137,17 +137,17 @@ const CreateToken = () => {
               placeholder="Token Name"
               value={tokenName}
               onChange={(e) => setTokenName(e.target.value)}
-              className="w-full p-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none "
+              className="w-full p-2 bg-white bg-opacity-10 border border-gray-600 rounded-lg focus:outline-none "
             />
             <input
               type="text"
               placeholder="Token Symbol"
               value={tokenSymbol}
               onChange={(e) => setTokenSymbol(e.target.value)}
-              className="w-full p-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none"
+              className="w-full p-2 bg-white bg-opacity-10 border border-gray-600 rounded-lg focus:outline-none"
             />
             <motion.button
-              className="w-full py-2 bg-indigo-800 hover:bg-pink-700 rounded-lg transition-colors"
+              className="w-full py-2 bg-sky-600 hover:bg-indigo-700 rounded-lg transition-colors"
               onClick={handleCreateToken}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -158,8 +158,8 @@ const CreateToken = () => {
         </div>
 
         {/* Your Tokens Section */}
-        <div className="bg-transparent border border-gray-700 rounded-lg shadow-lg">
-          <h2 className="text-2xl font-bold p-4 border-b border-gray-700">
+        <div className="bg-white bg-opacity-10 backdrop-blur-lg shadow-xl border border-white border-opacity-20 rounded-xl">
+          <h2 className="text-2xl font-bold p-4 border-b border-white border-opacity-45">
             Your Tokens
           </h2>
           <div className="h-[300px] overflow-y-auto custom-scrollbar">
@@ -175,7 +175,7 @@ const CreateToken = () => {
                 return (
                   <div
                     key={token.name}
-                    className="flex justify-between items-center p-4 hover:bg-gray-700 hover:rounded-lg transition-colors"
+                    className="flex justify-between items-center p-4 hover:bg-sky-600 hover:rounded-xl transition-colors"
                   >
                     <div>
                       <p className="font-semibold">{token.name}</p>
@@ -208,8 +208,16 @@ const CreateToken = () => {
 
       {/* Create Token Popup */}
       {createTokenPopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-50">
-          <div className="bg-indigo-900 p-6 rounded-xl max-w-lg">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-50"
+        onClick={() => setCreateTokenPopup(false)}
+        >
+          <div className="bg-gray-800 text-white p-6 rounded-xl max-w-lg relative">
+          <button
+              onClick={() => setCreateTokenPopup(false)}
+              className="absolute top-4 right-4 text-white hover:text-gray-300"
+            >
+              <p className="text-2xl">X</p>
+            </button>
             <h3 className="text-xl font-bold mb-4">Create Token Information</h3>
             <p className="text-gray-300 mb-4">
               In our platform, you can create your own tokens or mint existing
@@ -221,14 +229,6 @@ const CreateToken = () => {
               and you&apos;ll see this process in action as you interact with
               the platform.
             </p>
-            <motion.button
-              className="w-full py-2 bg-rose-900 rounded-lg transition-colors"
-              onClick={() => setCreateTokenPopup(false)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Close
-            </motion.button>
           </div>
         </div>
       )}
