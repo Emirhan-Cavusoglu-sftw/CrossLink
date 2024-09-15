@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getAccount } from "@wagmi/core";
 import { hexToNumber } from "viem";
+import Image from "next/image";
 
 interface Event {
   args: {
@@ -76,6 +77,7 @@ const MyOrders = () => {
   const [destinationChainSelector, setDestinationChainSelector] = useState(
     "16015286601757825753"
   );
+  const [selectedLogo, setSelectedLogo] = useState("eth");
 
   console.log("Selected Hook:", selectedHook);
 
@@ -295,6 +297,7 @@ const MyOrders = () => {
           amountIn
         );
         console.log("Order Placed:", result);
+        await refetch2();
       } catch (error) {
         console.error("Error placing order:", error);
       }
@@ -344,6 +347,7 @@ const MyOrders = () => {
         hexToNumber(String(order.args.inputAmount.hex)),
         Number(destinationChainSelector)
       );
+      await refetch2();
     } catch (error) {
       console.error("Error redeeming order:", error);
     }
@@ -362,6 +366,7 @@ const MyOrders = () => {
         order.args.tickToSellAt,
         order.args.zeroForOne
       );
+      await refetch2();
     } catch (error) {
       console.error("Error canceling order:", error);
     }
@@ -408,10 +413,21 @@ const MyOrders = () => {
       console.error("Error fetching or processing data:", error);
     }
   }
+
+  const handleLogoToggle = () => {
+    if (selectedLogo === "eth") {
+      setSelectedLogo("arb");
+      setDestinationChainSelector("3478487238524512106");
+    } else {
+      setSelectedLogo("eth");
+      setDestinationChainSelector("16015286601757825753");
+    }
+  };
+
   return (
     <>
-      <div className="flex flex-row justify-center items-center bg-transparent space-x-48 mt-24">
-        <div className="flex flex-col bg-white bg-opacity-10 backdrop-blur-lg w-[500px] h-[620px] pt-4 px-6 rounded-3xl shadow-xl p-8 border border-white border-opacity-20">
+      <div className="flex flex-row justify-center items-center bg-gradient-to-br from-gray-900 to-blue-900 space-x-48 h-screen">
+        <div className="flex flex-col bg-neutral-900 opacity-80 w-[500px] h-[620px] pt-4 px-6 rounded-3xl shadow-xl p-8 border border-white border-opacity-20">
           <div className="flex items-center justify-between mb-8 ">
             <h1 className="text-white text-3xl">Place Order</h1>
             <button
@@ -430,12 +446,12 @@ const MyOrders = () => {
               }}
               className="mb-4 p-3 rounded bg-white bg-opacity-10 border border-white border-opacity-20 text-white w-full"
             >
-              <option className="text-white bg-blue-800" value="">
+              <option className="text-white bg-gray-700" value="">
                 Select a Pool
               </option>
               {symbolData.map((data, index) => (
                 <option
-                  className="text-white bg-blue-800"
+                  className="text-white bg-gray-700"
                   key={index}
                   value={index}
                 >
@@ -546,8 +562,31 @@ const MyOrders = () => {
           </button>
         </div>
 
-        <div className="flex flex-col bg-white bg-opacity-10 backdrop-blur-lg w-[500px] h-[620px] rounded-3xl items-center pt-2 shadow-xl border border-white border-opacity-20">
-          <h1 className="text-white text-3xl mb-8">Orders</h1>
+        <div className="flex flex-col bg-neutral-900 opacity-80 w-[500px] h-[620px] rounded-3xl items-center pt-2 shadow-xl border border-white border-opacity-20">
+          <div className="flex justify-between mb-8">
+            <h1 className="text-white text-3xl pr-80">Orders</h1>
+            <button
+              onClick={handleLogoToggle}
+              className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-700 hover:bg-gray-600"
+            >
+              {selectedLogo === "eth" ? (
+                <Image
+                src={"/ethLogo.png"}
+                width={80}
+                height={20}
+                alt="ethLogo"
+                /> // Eth logosu
+              ) : (
+                <Image
+                src={"/arbLogo.png"}
+                width={20}
+                height={10}
+                alt="ethLogo"
+                /> // Arb logosu
+              )}
+            </button>
+          </div>
+
           <ul className="space-y-4 overflow-y-auto max-h-[500px] pr-2 custom-scrollbar">
             {orders
               .filter((order) => order.balance > 0)

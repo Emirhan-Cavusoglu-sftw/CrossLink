@@ -3,14 +3,14 @@
 @tailwind utilities;
 
 body {
-  background: linear-gradient(
+  /* background: linear-gradient(
     to bottom right,
     rgb(17, 24, 39) 0%,
     rgb(30, 58, 138) 100%
-  );
+  ); */
 
   font-family: "Roboto", sans-serif;
-  height: 100vh;
+  
 }
 
 .custom-scrollbar::-webkit-scrollbar {

@@ -90,9 +90,9 @@ const CreateToken = () => {
   }, [userTokens, tokenInfo]);
 
   return (
-    <div className="flex flex-col md:flex-row justify-center items-start gap-8 p-8 bg-transparent text-white">
+    <div className="flex flex-col md:flex-row justify-center items-center gap-8 p-8 text-white bg-gradient-to-br from-gray-900 to-blue-900 h-screen">
       {/* All Tokens Section */}
-      <div className="w-full md:w-[500px] bg-white bg-opacity-10 backdrop-blur-lg shadow-xl border border-white border-opacity-20 rounded-xl">
+      <div className="w-full md:w-[500px] bg-neutral-900 opacity-80 shadow-xl border border-white border-opacity-20 rounded-xl">
         <h2 className="text-2xl font-bold p-4 border-b border-white border-opacity-45">
           All Tokens
         </h2>
@@ -107,7 +107,7 @@ const CreateToken = () => {
                 <p className="text-gray-400 text-sm">({token.symbol})</p>
               </div>
               <motion.button
-                className="px-4 py-2 bg-sky-600 hover:bg-indigo-700 rounded-lg transition-colors w-24"
+                className="px-4 py-2 bg-indigo-700 hover:bg-sky-600 rounded-lg transition-colors w-24"
                 onClick={() => handleMintToken(token.tokenAddress)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -121,7 +121,7 @@ const CreateToken = () => {
 
       <div className="w-full md:w-[500px] space-y-8">
         {/* Create Token Section */}
-        <div className="bg-white bg-opacity-10 backdrop-blur-lg shadow-xl border border-white border-opacity-20 rounded-xl p-6">
+        <div className="bg-neutral-900 opacity-80 shadow-xl border border-white border-opacity-20 rounded-xl p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold">Create Token</h2>
             <button
@@ -147,7 +147,7 @@ const CreateToken = () => {
               className="w-full p-2 bg-white bg-opacity-10 border border-gray-600 rounded-lg focus:outline-none"
             />
             <motion.button
-              className="w-full py-2 bg-sky-600 hover:bg-indigo-700 rounded-lg transition-colors"
+              className="w-full py-2 bg-indigo-700 hover:bg-sky-600 rounded-lg transition-colors"
               onClick={handleCreateToken}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -158,7 +158,7 @@ const CreateToken = () => {
         </div>
 
         {/* Your Tokens Section */}
-        <div className="bg-white bg-opacity-10 backdrop-blur-lg shadow-xl border border-white border-opacity-20 rounded-xl">
+        <div className="bg-neutral-900 opacity-80 shadow-xl border border-white border-opacity-20 rounded-xl">
           <h2 className="text-2xl font-bold p-4 border-b border-white border-opacity-45">
             Your Tokens
           </h2>
@@ -175,7 +175,7 @@ const CreateToken = () => {
                 return (
                   <div
                     key={token.name}
-                    className="flex justify-between items-center p-4 hover:bg-sky-600 hover:rounded-xl transition-colors"
+                    className="flex justify-between items-center p-4 hover:bg-indigo-700 hover:rounded-xl transition-colors"
                   >
                     <div>
                       <p className="font-semibold">{token.name}</p>

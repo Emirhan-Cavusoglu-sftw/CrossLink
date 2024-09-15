@@ -64,9 +64,23 @@ const Swap = () => {
   console.log("Chain Id " + account.chainId);
 
   useEffect(() => {
-    getTokens();
+    const customTokens = [
+      {
+        tokenAddress: ccip,
+        mintedBy: "0xYourAddressHere", // Bu adresi gerektiği gibi ayarlayın
+        name: "CCIP-BnM",
+        symbol: "CCIP",
+      },
+    ];
+
+    getTokenInfo((fetchedTokens) => {
+      setTokenInfo([...fetchedTokens, ...customTokens]);
+    });
+  }, []);
+
+  useEffect(() => {
     fetchEvents();
-  }, [selectedHook]);
+  }, [selectedHook, tokens]);
 
   useEffect(() => {
     if (selectedPool) {
@@ -295,9 +309,9 @@ const Swap = () => {
   }, [amountSpecified, selectedPool, poolSlot]);
 
   return (
-    <div className="flex justify-center items-center mt-28">
+    <div className="flex justify-center items-center bg-gradient-to-br from-gray-900 to-blue-900 h-screen">
       <div
-        className={`bg-neutral-900 w-[500px] h-[460px] rounded-3xl flex flex-col items-center relative shadow-cyan-400 shadow-md`}
+        className={`bg-neutral-900 opacity-80 w-[500px] h-[460px] rounded-3xl flex flex-col items-center relative `}
       >
         <div className="absolute top-0 right-4 mt-4">
           <button

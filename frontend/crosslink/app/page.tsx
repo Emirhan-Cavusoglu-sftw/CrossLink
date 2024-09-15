@@ -49,7 +49,7 @@ export default function Home() {
   }, [mainControls3, inView3]);
 
   return (
-    <div className="min-h-screen">
+    <div className="bg-gradient-to-br from-gray-900 to-blue-900 min-h-screen">
       <div className="flex justify-center items-center flex-col ">
         <div className="flex mt-[200px] mb-[100px]">
           <div className="flex flex-col space-y-64">
