@@ -126,8 +126,10 @@ export async function redeem(
   ],
   tickToSellAt: number,
   zeroForOne: boolean,
-  amountIn: string
+  amountIn: number,
+  destinationChainSelector : number
 ) {
+  console.log("destinationChainSelector: ", destinationChainSelector);
   try {
     const redeem = await writeContract(config, {
       abi: LimitOrderABI,
@@ -137,7 +139,8 @@ export async function redeem(
         [currency0, currency1, fee, tickSpacing, hooks],
         tickToSellAt,
         zeroForOne,
-        BigInt(amountIn),
+        BigInt(String(amountIn)),
+        BigInt("16015286601757825753")
       ],
     });
     console.log("Redeem:", redeem);

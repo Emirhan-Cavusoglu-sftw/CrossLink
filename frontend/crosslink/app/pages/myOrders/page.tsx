@@ -18,6 +18,7 @@ import { getTokenInfo } from "../../../utils/functions/createTokenFunctions";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getAccount } from "@wagmi/core";
+import { hexToNumber } from 'viem'
 
 interface Event {
   args: {
@@ -72,6 +73,7 @@ const MyOrders = () => {
   const router = useRouter();
   const [symbolData, setSymbolData] = useState([]);
   const [limitOrderInfoPopup, setLimitOrderInfoPopup] = useState(false);
+  const [destinationChainSelector, setDestinationChainSelector] = useState("16015286601757825753");
 
   console.log("Selected Hook:", selectedHook);
 
@@ -325,7 +327,9 @@ const MyOrders = () => {
     }
   }
 
+ 
   async function handleRedeem(order: Order) {
+    console.log("Amount: ", hexToNumber(String(order.args.inputAmount.hex)));
     try {
       await redeem(
         [
@@ -337,7 +341,8 @@ const MyOrders = () => {
         ],
         order.args.tickToSellAt,
         order.args.zeroForOne,
-        String(order.args.inputAmount)
+        hexToNumber(String(order.args.inputAmount.hex)),
+        Number(destinationChainSelector)
       );
     } catch (error) {
       console.error("Error redeeming order:", error);

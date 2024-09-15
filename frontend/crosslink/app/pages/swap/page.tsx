@@ -213,7 +213,7 @@ const Swap = () => {
             selectedPool.args.tickSpacing,
             selectedPool.args.hooks,
           ],
-          [zeroForOne, BigInt(amountSpecified), sqrtPriceLimitX96]
+          [zeroForOne, amountSpecified, sqrtPriceLimitX96]
         );
       } else {
         console.error("Approve işlemi başarısız oldu.");

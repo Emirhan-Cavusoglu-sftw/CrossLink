@@ -12,7 +12,7 @@ export async function swap(
     number,
     string
   ],
-  [zeroForOne, amountSpecified, sqrtPriceLimitX96]: [boolean, BigInt, BigInt]
+  [zeroForOne, amountSpecified, sqrtPriceLimitX96]: [boolean, string, BigInt]
 ) {
   try {
     console.log("zeroForOne " + zeroForOne);
@@ -26,7 +26,7 @@ export async function swap(
         [currency0, currency1, fee, tickSpacing, hooks],
         [
           zeroForOne,
-          -parseEther(amountSpecified.toString()),
+          -parseEther(amountSpecified),
           sqrtPriceLimitX96,
         ],
         [false, false],

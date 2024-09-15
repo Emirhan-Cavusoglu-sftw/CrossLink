@@ -32,10 +32,10 @@ const CreateToken = () => {
     await getUserTokens(setUserTokens);
   };
 
-  useEffect(() => {
-    getTokenInfo(setTokenInfo);
-    getUserTokens(setUserTokens);
-  }, []);
+  // useEffect(() => {
+  //   getTokenInfo(setTokenInfo);
+  //   getUserTokens(setUserTokens);
+  // }, []);
 
   const handleMintToken = async (tokenAddress: string) => {
     await mintToken(tokenAddress);
