@@ -50,7 +50,7 @@ contract CcipTransfer is OwnerIsCreator {
     function allowlistDestinationChain(
         uint64 _destinationChainSelector,
         bool allowed
-    ) external onlyOwner {
+    ) external  {
         allowlistedChains[_destinationChainSelector] = allowed;
     }
 
@@ -61,7 +61,7 @@ contract CcipTransfer is OwnerIsCreator {
         uint256 _amount
     )
         public
-        onlyOwner
+        
         onlyAllowlistedChain(_destinationChainSelector)
         validateReceiver(_receiver)
         returns (bytes32 messageId)
@@ -110,7 +110,7 @@ contract CcipTransfer is OwnerIsCreator {
         uint256 _amount
     )
         external
-        onlyOwner
+        
         onlyAllowlistedChain(_destinationChainSelector)
         validateReceiver(_receiver)
         returns (bytes32 messageId)
@@ -177,7 +177,7 @@ contract CcipTransfer is OwnerIsCreator {
 
     receive() external payable {}
 
-    function withdraw(address _beneficiary) public onlyOwner {
+    function withdraw(address _beneficiary) public  {
         uint256 amount = address(this).balance;
 
         if (amount == 0) revert NothingToWithdraw();
@@ -190,7 +190,7 @@ contract CcipTransfer is OwnerIsCreator {
     function withdrawToken(
         address _beneficiary,
         address _token
-    ) public onlyOwner {
+    ) public  {
         uint256 amount = IERC20(_token).balanceOf(address(this));
 
         if (amount == 0) revert NothingToWithdraw();

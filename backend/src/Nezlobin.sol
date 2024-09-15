@@ -11,17 +11,19 @@ import {FullMath} from "v4-core/libraries/FullMath.sol";
 import {BeforeSwapDelta, BeforeSwapDeltaLibrary} from "v4-core/types/BeforeSwapDelta.sol";
 import {StateLibrary} from "v4-core/libraries/StateLibrary.sol";
 import {PoolId, PoolIdLibrary} from "v4-core/types/PoolId.sol";
+import {Math} from "v4-periphery/lib/permit2/lib/openzeppelin-contracts/contracts/utils/math/Math.sol";
 
 contract Nezlobin is BaseHook {
     using LPFeeLibrary for uint24;
     uint256 public counter = 3;
     error MustUseDynamicFee();
     IPoolManager public manager;
-    uint24 public constant SCALE = 1000;
-    uint24 public constant MULTIPLIER = 750; // 0.75
+    uint256 public constant SCALE = 1000;
+    uint256 public constant MULTIPLIER = 750; // 0.75
     uint24 public constant BASE_FEE = 3000; // 0.03%
     uint24 public constant MIN_FEE = 500; // 0.005%
-    uint24 public constant MAX_FEE = 1000000; // 10%
+    uint24 public constant MAX_LP_FEE = 900000;
+
     mapping(PoolId => uint256) public poolToTimeStamp;
     mapping(PoolId => int24) public poolToTick;
 
@@ -108,29 +110,39 @@ contract Nezlobin is BaseHook {
         return tick;
     }
 
+    function getCurrentFee(PoolKey calldata key) public view returns (uint24) {
+        PoolId id = PoolIdLibrary.toId(key);
+        (, , , uint24 fee) = StateLibrary.getSlot0(manager, id);
+        return fee;
+    }
+
     function calculateDynamicFee(
         PoolKey calldata pool,
         uint24 delta,
         IPoolManager.SwapParams calldata params
-    ) public pure returns (uint24) {
-        uint24 c = (MULTIPLIER * BASE_FEE) / (delta * SCALE);
-        uint24 beta = c * delta;
+    ) public view returns (uint24) {
+        uint24 currentFee = getCurrentFee(pool);
+        if (currentFee == 0) currentFee = BASE_FEE;
 
+        uint256 c_temp = (MULTIPLIER * uint256(currentFee)) / SCALE;
+        uint24 c = uint24(Math.min(c_temp, uint256(type(uint24).max)));
+
+        uint256 beta_temp = uint256(c) * uint256(delta);
+        uint24 beta = uint24(Math.min(beta_temp, uint256(MAX_LP_FEE)));
+
+        uint24 newFee;
         if (!params.zeroForOne) {
-            uint24 newFee = beta + BASE_FEE;
-            if (newFee > MAX_FEE) {
-                return MAX_FEE;
-            }
-            return newFee;
+            uint256 newFee_temp = BASE_FEE + beta;
+            newFee = uint24(Math.min(newFee_temp, uint256(MAX_LP_FEE)));
         } else {
-            // Check to avoid underflow
-            if (beta > BASE_FEE) {
-                return MIN_FEE;
+            if (beta >= BASE_FEE) {
+                newFee = MIN_FEE;
+            } else {
+                uint256 newFee_temp = BASE_FEE - beta;
+                newFee = uint24(Math.max(newFee_temp, uint256(MIN_FEE)));
             }
-            uint24 newFee = BASE_FEE - beta;
-            return newFee;
         }
-    }
 
-    
+        return newFee;
+    }
 }
