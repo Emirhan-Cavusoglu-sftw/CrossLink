@@ -104,7 +104,6 @@ contract Nezlobin is BaseHook {
     uint256 scaledDelta = Math.sqrt(uint256(delta) * 1000); // Multiply by 1000 to preserve some precision
     
     // Calculate c with dampening factor
-    // Increased MULTIPLIER from 500 to 600
     uint256 c_temp = (MULTIPLIER * uint256(currentFee)) / (SCALE * 2);
     uint24 c = uint24(Math.min(c_temp, uint256(type(uint24).max)));
 
@@ -126,7 +125,6 @@ contract Nezlobin is BaseHook {
     }
 
     // Limit the fee change
-    // Increased maxChange from 25% to 30% of current fee
     uint24 maxChange = (currentFee * 3) / 10; // Limit change to 30% of current fee
     if (newFee > currentFee) {
         newFee = uint24(Math.min(uint256(newFee), uint256(currentFee) + maxChange));
