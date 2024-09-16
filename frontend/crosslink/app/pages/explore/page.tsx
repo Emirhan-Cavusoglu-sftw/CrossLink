@@ -70,15 +70,9 @@ const Explore = () => {
     );
     const tokenSymbol1 = token0 ? token0.symbol : "Unknown";
     const tokenSymbol2 = token1 ? token1.symbol : "Unknown";
-    
+
     router.push(
-      `/pages/addLiquidity?id=${pool.args.id}&token0=${
-        pool.args.currency0
-      }&token1=${pool.args.currency1}&fee=${pool.args.fee}&tickSpacing=${
-        pool.args.tickSpacing
-      }&sqrtPriceX96=${pool.args.sqrtPriceX96}&tick=${
-        pool.args.tick
-      }&price=${price}&hooks=${pool.args.hooks}&tokenSymbol1=${tokenSymbol1}&tokenSymbol2=${tokenSymbol2}`
+      `/pages/addLiquidity?id=${pool.args.id}&token0=${pool.args.currency0}&token1=${pool.args.currency1}&fee=${pool.args.fee}&tickSpacing=${pool.args.tickSpacing}&sqrtPriceX96=${pool.args.sqrtPriceX96}&tick=${pool.args.tick}&price=${price}&hooks=${pool.args.hooks}&tokenSymbol1=${tokenSymbol1}&tokenSymbol2=${tokenSymbol2}`
     );
   };
 
@@ -107,7 +101,7 @@ const Explore = () => {
       console.error("Error fetching events: ", (error as any).message);
     }
   };
-  
+
   useEffect(() => {
     fetchEvents();
   }, [selectedHook, tokenInfo]);
@@ -140,14 +134,28 @@ const Explore = () => {
     hooks: string,
     id: string
   ) {
+    const account = getAccount(config);
+    let readerAddress = "";
+    let poolManagerAddress = "";
+    if (account.chainId) {
+      if (String(account.chainId) == "421614") {
+        readerAddress = "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E";
+        poolManagerAddress = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
+      } else if (String(account.chainId) == "11155111") {
+        readerAddress = "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E";
+        poolManagerAddress = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
+      } else {
+        alert("Invalid chainId");
+      }
+    }
     try {
       const slot: any[] = await readContract(config, {
         abi: LiquidiytDeltaABI,
-        address: "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E",
+        address: readerAddress,
         functionName: "getSlot0",
         args: [
           [currency0, currency1, fee, tickSpacing, hooks],
-          "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58",
+          poolManagerAddress,
         ],
       });
       console.log(slot);

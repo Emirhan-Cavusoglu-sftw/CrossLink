@@ -5,9 +5,21 @@ import { getAccount } from "@wagmi/core";
 import { ERC20ABI } from "../ERC20ABI.json";
 import { parseUnits, formatUnits } from "viem";
 
-const launchPadAddress = "0x5112c7a1E0D89ca200ecd23BB38fDc21dd5C6B51";
+// const launchPadAddress = "0x5112c7a1E0D89ca200ecd23BB38fDc21dd5C6B51";
 
 export async function createToken(tokenName: string, tokenSymbol: string) {
+  const account = getAccount(config);
+  let launchPadAddress = "";
+  if (account.chainId) {
+    if (String(account.chainId) == "421614") {
+      launchPadAddress = "0x5112c7a1E0D89ca200ecd23BB38fDc21dd5C6B51";
+    } else if (String(account.chainId) == "11155111") {
+      // bu değişecek
+      launchPadAddress = "0x5112c7a1E0D89ca200ecd23BB38fDc21dd5C6B51";
+    } else {
+      alert("Invalid chainId");
+    }
+  }
   try {
     const deployedToken = await writeContract(config, {
       abi: LaunchPadABI,
@@ -25,6 +37,18 @@ export async function createToken(tokenName: string, tokenSymbol: string) {
 export async function getTokenInfo(
   setTokenInfo: (tokenInfo: TokenInfo[]) => void
 ) {
+  const account = getAccount(config);
+  let launchPadAddress = "";
+  if (account.chainId) {
+    if (String(account.chainId) == "421614") {
+      launchPadAddress = "0x5112c7a1E0D89ca200ecd23BB38fDc21dd5C6B51";
+    } else if (String(account.chainId) == "11155111") {
+      // bu değişecek
+      launchPadAddress = "0x5112c7a1E0D89ca200ecd23BB38fDc21dd5C6B51";
+    } else {
+      alert("Invalid chainId");
+    }
+  }
   try {
     const [tokenAddresses, mintedBys, names, symbols] = await readContract(
       config,
@@ -53,6 +77,17 @@ export async function getUserTokens(
   setUserTokens: (userTokens: { name: string; symbol: string }[]) => void
 ) {
   const account = getAccount(config);
+  let launchPadAddress = "";
+  if (account.chainId) {
+    if (String(account.chainId) == "421614") {
+      launchPadAddress = "0x5112c7a1E0D89ca200ecd23BB38fDc21dd5C6B51";
+    } else if (String(account.chainId) == "11155111") {
+      // bu değişecek
+      launchPadAddress = "0x5112c7a1E0D89ca200ecd23BB38fDc21dd5C6B51";
+    } else {
+      alert("Invalid chainId");
+    }
+  }
   try {
     const [names, symbols] = await readContract(config, {
       abi: LaunchPadABI,
@@ -75,6 +110,18 @@ export async function getUserTokens(
 
 export async function mintToken(tokenAddress: string) {
   try {
+    const account = getAccount(config);
+    let launchPadAddress = "";
+    if (account.chainId) {
+      if (String(account.chainId) == "421614") {
+        launchPadAddress = "0x5112c7a1E0D89ca200ecd23BB38fDc21dd5C6B51";
+      } else if (String(account.chainId) == "11155111") {
+        // bu değişecek
+        launchPadAddress = "0x5112c7a1E0D89ca200ecd23BB38fDc21dd5C6B51";
+      } else {
+        alert("Invalid chainId");
+      }
+    }
     const mintedToken = await writeContract(config, {
       abi: LaunchPadABI,
       address: launchPadAddress,

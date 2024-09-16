@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { PoolManagerABI } from "../../../utils/poolManagerABI.json";
-import { writeContract, readContract } from "@wagmi/core";
+import { writeContract, readContract, getAccount } from "@wagmi/core";
 import { config } from "../../../utils/config";
 import { getTokenInfo } from "../../../utils/functions/createTokenFunctions";
 import { useHook } from "../../../components/hookContext";
@@ -24,7 +24,7 @@ const availableHooks = {
   UniswapV4: "0x0000000000000000000000000000000000000000",
   Nezlobin: "0x7Ce503FC8c2E2531D5aF549bf77f040Ad9c36080",
   LimitOrder: "0x735F883b29561463ec096670974670EC5Ff5D040",
-};
+}; // buraya sepoliadaki hooklar da eklenecek
 
 const CreatePool = () => {
   const [currency0, setCurrency0] = useState("");
@@ -51,18 +51,17 @@ const CreatePool = () => {
         symbol: "ARB",
       },
     ];
-  
+
     getTokenInfo((fetchedTokens) => {
       setTokenInfo([...fetchedTokens, ...customTokens]);
     });
   }, []);
-  
 
   useEffect(() => {
-    if (selectedHook == "0x7Ce503FC8c2E2531D5aF549bf77f040Ad9c36080") {
+    if (selectedHook == "0x7Ce503FC8c2E2531D5aF549bf77f040Ad9c36080" || selectedHook == "0x7Ce503FC8c2E2531D5aF549bf77f040Ad9c36080") {
       setFee("8388608");
     }
-  }, [selectedHook]);
+  }, [selectedHook]); // Buradaki hooklar değişecek her iki chain için de
 
   const sqrtPriceOptions = [
     { value: "79228162514264337593543950336", label: "1:1" },
@@ -94,10 +93,20 @@ const CreatePool = () => {
   };
 
   async function createPool(address0: string, address1: string) {
+    const account = getAccount(config);
+    let address = "";
+    if (account.chainId) {
+      if (String(account.chainId) == "421614") {
+        address = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
+      } else if (String(account.chainId) == "11155111") {
+        // burası değişecek
+        address = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
+      }
+    }
     try {
       const newPool = await writeContract(config, {
         abi: PoolManagerABI,
-        address: "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58",
+        address: address,
         functionName: "initialize",
         args: [
           [
@@ -118,12 +127,12 @@ const CreatePool = () => {
   }
 
   return (
-    <div className="flex justify-center items-center text-center">
-      <div className="flex flex-col bg-transparent border-2 border-gray-500 border-opacity-80 shadow-lg shadow-cyan-400 w-[850px] h-[600px] mt-16 rounded-xl p-8 items-center ">
+    <div className="flex justify-center items-center text-center bg-gradient-to-br from-gray-900 to-blue-900 h-screen">
+      <div className="flex flex-col bg-neutral-900 opacity-80 border-2 border-gray-500 border-opacity-80 w-[850px] h-[600px] mt-16 rounded-xl p-8 items-center ">
         <h2 className="text-white text-3xl mb-6">Create a New Pool</h2>
 
         <select
-          className="mb-4 p-3 bg-gray-800 text-white w-[800px] rounded-lg border border-gray-500"
+          className="mb-4 p-3 bg-neutral-700 text-white w-[800px] rounded-lg border border-gray-500 outline-none"
           value={currency0}
           onChange={(e) => setCurrency0(e.target.value)}
         >
@@ -136,7 +145,7 @@ const CreatePool = () => {
         </select>
 
         <select
-          className="mb-4 p-3 bg-gray-800 text-white w-[800px] rounded-lg border border-gray-600"
+          className="mb-4 p-3 bg-neutral-700 text-white w-[800px] rounded-lg border border-gray-600 outline-none"
           value={currency1}
           onChange={(e) => setCurrency1(e.target.value)}
         >
@@ -149,7 +158,7 @@ const CreatePool = () => {
         </select>
 
         <input
-          className="mb-4 p-3 bg-gray-800 text-white w-[800px] rounded-lg border border-gray-600"
+          className="mb-4 p-3 bg-neutral-700 text-white w-[800px] rounded-lg border border-gray-600 outline-none"
           type="number"
           placeholder="Fee"
           value={fee}
@@ -171,7 +180,7 @@ const CreatePool = () => {
         `}</style>
 
         <input
-          className="mb-4 p-3 bg-gray-800 text-white w-[800px] rounded-lg border border-gray-600"
+          className="mb-4 p-3 bg-neutral-700 text-white w-[800px] rounded-lg border border-gray-600 outline-none"
           type="number"
           placeholder="Tick Spacing"
           value={tickSpacing}
@@ -193,7 +202,7 @@ const CreatePool = () => {
         `}</style>
 
         <select
-          className="mb-4 p-3 bg-gray-800 text-white w-[800px] rounded-lg border border-gray-600"
+          className="mb-4 p-3 bg-neutral-700 text-white w-[800px] rounded-lg border border-gray-600 outline-none"
           value={selectedHookk}
           onChange={(e) => setSelectedHook(e.target.value)}
         >
@@ -206,7 +215,7 @@ const CreatePool = () => {
         </select>
 
         <select
-          className="mb-4 p-3 bg-gray-800 text-white w-[800px] rounded-lg border border-gray-600"
+          className="mb-4 p-3 bg-neutral-700 text-white w-[800px] rounded-lg border border-gray-600 outline-none"
           value={sqrtPriceX96}
           onChange={(e) => setSqrtPriceX96(e.target.value)}
         >
@@ -219,7 +228,7 @@ const CreatePool = () => {
         </select>
 
         <motion.button
-          className="mt-4 p-3 text-white rounded-lg w-[400px] text-xl bg-blue-800 hover:bg-blue-950 "
+          className="mt-4 p-3 text-white rounded-lg w-[400px] text-xl bg-sky-600 hover:bg-indigo-700"
           onClick={handleSubmit}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.7 }}

@@ -1,12 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { PoolManagerABI } from "../../../utils/poolManagerABI.json";
 import { motion } from "framer-motion";
 import { useHook } from "../../../components/hookContext";
 import { getAccount, readContract } from "@wagmi/core";
-import { ethers } from "ethers";
-import { keccak256 } from "ethers/lib/utils";
 import { config } from "../../../utils/config";
 import {
   getUserTokens,
@@ -56,7 +53,6 @@ const MyPools = () => {
   const [tickPrices, setTickPrices] = useState<{ [key: string]: number }>({});
   const [poolInfoPopup, setPoolInfoPopup] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const customTokens = [
@@ -73,7 +69,7 @@ const MyPools = () => {
         symbol: "ARB",
       },
     ];
-  
+
     getTokenInfo((fetchedTokens) => {
       setTokenInfo([...fetchedTokens, ...customTokens]);
     });
@@ -167,10 +163,24 @@ const MyPools = () => {
   };
 
   async function getSlotAndCalculatePrice(events: Event[]) {
+    const account = getAccount(config);
+    let readerAddress = "";
+    let poolManagerAddress = "";
+    if (account.chainId) {
+      if (String(account.chainId) == "421614") {
+        readerAddress = "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E";
+        poolManagerAddress = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
+      } else if (String(account.chainId) == "11155111") {
+        readerAddress = "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E";
+        poolManagerAddress = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
+      } else {
+        alert("Invalid chainId");
+      }
+    }
     try {
       const slot: any[] = await readContract(config, {
         abi: LiquidiytDeltaABI,
-        address: "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E",
+        address: readerAddress,
         functionName: "getSlot0",
         args: [
           [
@@ -180,7 +190,7 @@ const MyPools = () => {
             events.args.tickSpacing,
             events.args.hooks,
           ],
-          "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58",
+          poolManagerAddress,
         ],
       });
       const tick = Number(slot[1]); // Ensure tick is a number

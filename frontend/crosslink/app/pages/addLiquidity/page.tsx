@@ -12,7 +12,8 @@ import { waitForTransactionReceipt } from "@wagmi/core";
 import { config } from "../../../utils/config";
 import { getAllowance } from "../../../utils/functions/allowanceFunction";
 import { LiquidiytDeltaABI } from "../../../utils/readerABI.json";
-import { writeContract, readContract } from "@wagmi/core";
+import { writeContract, readContract, getAccount } from "@wagmi/core";
+import { a } from "framer-motion/client";
 
 const Liquidity = () => {
   const searchParams = useSearchParams();
@@ -88,16 +89,28 @@ const Liquidity = () => {
     const poolModifyLiquidityAddress =
       "0xc66f440Ee31e3aE0b026972Ad0C6D62DfD27596B";
 
+    const account = getAccount(config);
+    let modifyLiquidityAddress = "";
+    if (account.chainId) {
+      if (String(account.chainId) == "421614") {
+        modifyLiquidityAddress = "0xc66f440Ee31e3aE0b026972Ad0C6D62DfD27596B";
+      } else if (String(account.chainId) == "11155111") {
+        modifyLiquidityAddress = "0xc66f440Ee31e3aE0b026972Ad0C6D62DfD27596B";
+      } else {
+        alert("Chain ID not supported.");
+      }
+    }
+
     // Token 0 için allowance kontrolü
     const allowance1 = await getAllowance(
       String(token0),
-      poolModifyLiquidityAddress
+      modifyLiquidityAddress
     );
 
     // Token 1 için allowance kontrolü
     const allowance2 = await getAllowance(
       String(token1),
-      poolModifyLiquidityAddress
+      modifyLiquidityAddress
     );
 
     let approve1hash, approve2hash;
@@ -105,7 +118,7 @@ const Liquidity = () => {
     // Allowance kontrolü yap, 0 ise approve yap
     if (BigInt(allowance1) === BigInt(0)) {
       console.log("Token 0 için onay gerekli.");
-      approve1hash = await Approve(String(token0), poolModifyLiquidityAddress);
+      approve1hash = await Approve(String(token0), modifyLiquidityAddress);
       await waitForTransactionReceipt(config, { hash: approve1hash });
     } else {
       console.log("Token 0 için onay gerekli değil.");
@@ -113,7 +126,7 @@ const Liquidity = () => {
 
     if (BigInt(allowance2) === BigInt(0)) {
       console.log("Token 1 için onay gerekli.");
-      approve2hash = await Approve(String(token1), poolModifyLiquidityAddress);
+      approve2hash = await Approve(String(token1), modifyLiquidityAddress);
       await waitForTransactionReceipt(config, { hash: approve2hash });
     } else {
       console.log("Token 1 için onay gerekli değil.");
@@ -153,14 +166,28 @@ const Liquidity = () => {
     fee: number,
     tickSpacing: number
   ) {
+    const account = getAccount(config);
+    let readerAddress = "";
+    let address = "";
+    if (account.chainId) {
+      if (String(account.chainId) == "421614") {
+        readerAddress = "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E";
+        address = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
+      } else if (String(account.chainId) == "11155111") {
+        readerAddress = "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E";
+        address = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
+      } else {
+        alert("Chain ID not supported.");
+      }
+    }
     try {
       const slot: any[] = await readContract(config, {
         abi: LiquidiytDeltaABI,
-        address: "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E",
+        address: readerAddress,
         functionName: "getSlot0",
         args: [
           [token0, token1, fee, tickSpacing, selectedHook],
-          "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58",
+          address,
         ],
       });
       console.log(slot);

@@ -53,13 +53,6 @@ interface Order {
   claimableTokens: number;
 }
 
-interface TokenInfo {
-  tokenAddress: string;
-  mintedBy: string;
-  name: string;
-  symbol: string;
-}
-
 const MyOrders = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
@@ -70,7 +63,6 @@ const MyOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [price, setPrice] = useState<string>("");
   const [usePrice, setUsePrice] = useState<boolean>(false);
-  const [tokenInfo, setTokenInfo] = useState<TokenInfo[]>([]);
   const router = useRouter();
   const [symbolData, setSymbolData] = useState([]);
   const [limitOrderInfoPopup, setLimitOrderInfoPopup] = useState(false);
@@ -132,7 +124,10 @@ const MyOrders = () => {
   }, [events]);
 
   useEffect(() => {
-    if (selectedHook !== "0x735F883b29561463ec096670974670EC5Ff5D040") {
+    if (
+      selectedHook !== "0x735F883b29561463ec096670974670EC5Ff5D040" ||
+      selectedHook !== "0x735F883b29561463ec096670974670EC5Ff5D040" // bu değişecek
+    ) {
       router.push("/");
     }
   }, [selectedHook]);
@@ -248,7 +243,19 @@ const MyOrders = () => {
         selectedEvent.args.hooks,
       ];
 
-      const hookAddress = "0x735F883b29561463ec096670974670EC5Ff5D040";
+      // const hookAddress = "0x735F883b29561463ec096670974670EC5Ff5D040";
+      const account = getAccount(config);
+      let hookAddress = "";
+      if (account.chainId) {
+        if (String(account.chainId) == "421614") {
+          hookAddress = "0x735F883b29561463ec096670974670EC5Ff5D040";
+        } else if (String(account.chainId) == "11155111") {
+          // bu değişecek
+          hookAddress = "0x735F883b29561463ec096670974670EC5Ff5D040";
+        } else {
+          alert("Invalid chainId");
+        }
+      }
 
       // Token 0 için allowance kontrolü
       const allowance1 = await getAllowance(
@@ -317,13 +324,24 @@ const MyOrders = () => {
       alert("Invalid Token Address");
       return;
     }
-
+    const account = getAccount(config);
+    let hookAddress = "";
+    if (account.chainId) {
+      if (String(account.chainId) == "421614") {
+        hookAddress = "0x735F883b29561463ec096670974670EC5Ff5D040";
+      } else if (String(account.chainId) == "11155111") {
+        // bu değişecek
+        hookAddress = "0x735F883b29561463ec096670974670EC5Ff5D040";
+      } else {
+        alert("Invalid chainId");
+      }
+    }
     try {
       const approve = await writeContract(config, {
         abi: ERC20ABI,
         address: tokenAddress,
         functionName: "approve",
-        args: ["0x735F883b29561463ec096670974670EC5Ff5D040", uintMax],
+        args: [hookAddress, uintMax],
       });
       return approve;
     } catch (error) {
@@ -571,17 +589,17 @@ const MyOrders = () => {
             >
               {selectedLogo === "eth" ? (
                 <Image
-                src={"/ethLogo.png"}
-                width={80}
-                height={20}
-                alt="ethLogo"
+                  src={"/ethLogo.png"}
+                  width={80}
+                  height={20}
+                  alt="ethLogo"
                 /> // Eth logosu
               ) : (
                 <Image
-                src={"/arbLogo.png"}
-                width={20}
-                height={10}
-                alt="ethLogo"
+                  src={"/arbLogo.png"}
+                  width={20}
+                  height={10}
+                  alt="ethLogo"
                 /> // Arb logosu
               )}
             </button>
