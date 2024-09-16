@@ -14,21 +14,33 @@ export async function swap(
   ],
   [zeroForOne, amountSpecified, sqrtPriceLimitX96]: [boolean, string, BigInt]
 ) {
+  const account = getAccount(config);
+  console.log("chainId: " + account.chainId);
+  let address = "";
+
+  if (account.chainId) {
+    if (String(account.chainId) == "421614") {
+      address = "0x540bFc2FB3B040761559519f9F44690812f3514e";
+    } else if (String(account.chainId) == "11155111") {
+      address = "0x540bFc2FB3B040761559519f9F44690812f3514e"; // bu değişecek
+    } else {
+      alert("Invalid chainId");
+    }
+  } else {
+    alert("Chain ID not found");
+  }
   try {
     console.log("zeroForOne " + zeroForOne);
     console.log("amountSpecified " + -parseEther(amountSpecified.toString()));
     console.log("sqrtPriceLimitX96 " + sqrtPriceLimitX96);
+    console.log("address " + address);
     const swap = writeContract(config, {
       abi: SwapRouterABI,
-      address: "0x540bFc2FB3B040761559519f9F44690812f3514e",
+      address: address,
       functionName: "swap",
       args: [
         [currency0, currency1, fee, tickSpacing, hooks],
-        [
-          zeroForOne,
-          -parseEther(amountSpecified),
-          sqrtPriceLimitX96,
-        ],
+        [zeroForOne, -parseEther(amountSpecified), sqrtPriceLimitX96],
         [false, false],
         "0x",
       ],

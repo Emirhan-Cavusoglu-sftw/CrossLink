@@ -6,6 +6,7 @@ import { parseUnits, formatUnits, parseEther } from "viem";
 import { ModifiyLiquidityABI } from "../modifyLiquidityABI.json";
 import { LiquidiytDeltaABI } from "../readerABI.json";
 import { ERC20ABI } from "../ERC20ABI.json";
+import { get } from "http";
 
 export async function Approve(tokenAddress: string) {
   const uintMax = 10000000000000000000000000;
@@ -18,12 +19,24 @@ export async function Approve(tokenAddress: string) {
     alert("Invalid Token Address");
     return;
   }
+
+  const account = getAccount(config);
+  let address = "";
+  if (account.chainId) {
+    if (String(account.chainId) == "421614") {
+      address = "0xc66f440Ee31e3aE0b026972Ad0C6D62DfD27596B";
+    } else if (String(account.chainId) == "11155111") {
+      address = "0xc66f440Ee31e3aE0b026972Ad0C6D62DfD27596B";
+    } else {
+      alert("Invalid chainId");
+    }
+  }
   try {
     const approve = await writeContract(config, {
       abi: ERC20ABI,
       address: tokenAddress,
       functionName: "approve",
-      args: ["0xc66f440Ee31e3aE0b026972Ad0C6D62DfD27596B", uintMax],
+      args: [address, uintMax],
     });
     console.log("Approve " + approve);
     return approve;
@@ -42,10 +55,21 @@ export async function addLiquidity(
   ],
   [lowerTick, upperTick, liquidityDelta]: [number, number, string]
 ) {
+  const account = getAccount(config);
+  let address = "";
+  if (account.chainId) {
+    if (String(account.chainId) == "421614") {
+      address = "0xc66f440Ee31e3aE0b026972Ad0C6D62DfD27596B";
+    } else if (String(account.chainId) == "11155111") {
+      address = "0xc66f440Ee31e3aE0b026972Ad0C6D62DfD27596B";
+    } else {
+      alert("Invalid chainId");
+    }
+  }
   try {
     const liquidity = await writeContract(config, {
       abi: ModifiyLiquidityABI,
-      address: "0xc66f440Ee31e3aE0b026972Ad0C6D62DfD27596B",
+      address: address,
       functionName: "modifyLiquidity",
       value: parseEther("0"),
       args: [
@@ -78,11 +102,24 @@ export async function getLiquidityDelta(
   token0Amount: string,
   token1Amount: string
 ) {
-  const managerAddress = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
+  const account = getAccount(config);
+  let managerAddress = "";
+  let address = "";
+  if (account.chainId) {
+    if (String(account.chainId) == "421614") {
+      address = "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E";
+      managerAddress = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
+    } else if (String(account.chainId) == "11155111") {
+      address = "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E";
+      managerAddress = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
+    } else {
+      alert("Invalid chainId");
+    }
+  }
   try {
     const liquidityDelta = await readContract(config, {
       abi: LiquidiytDeltaABI,
-      address: "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E",
+      address: address,
       functionName: "read",
       args: [
         [currency0, currency1, fee, tickSpacing, hooks],

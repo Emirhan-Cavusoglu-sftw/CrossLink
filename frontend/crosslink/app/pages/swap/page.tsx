@@ -40,7 +40,6 @@ const Swap = () => {
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [selectedToken1, setSelectedToken1] = useState("");
   const [selectedToken2, setSelectedToken2] = useState("");
-  const [activeTokenInput, setActiveTokenInput] = useState(1);
   const [amountSpecified, setAmountIn] = useState("");
   const [token1Address, setToken1Address] = useState("");
   const [token2Address, setToken2Address] = useState("");
@@ -176,16 +175,33 @@ const Swap = () => {
       return;
     }
 
-    const swapAddress = "0x540bFc2FB3B040761559519f9F44690812f3514e";
+    const account = getAccount(config);
+
+    let swapAddress = "";
+
+    if (account.chainId) {
+      if (String(account.chainId) == "421614") {
+        swapAddress = "0x540bFc2FB3B040761559519f9F44690812f3514e";
+      } else if (String(account.chainId) == "11155111") {
+        // Bu değişecek
+        swapAddress = "0x540bFc2FB3B040761559519f9F44690812f3514e";
+      }
+    }
     try {
-      const allowance1 = await getAllowance(
-        selectedPool.args.currency0,
-        swapAddress
-      );
-      const allowance2 = await getAllowance(
-        selectedPool.args.currency1,
-        swapAddress
-      );
+      let allowance1: number = 0;
+      let allowance2: number = 0;
+      if (swapAddress) {
+        allowance1 = await getAllowance(
+          selectedPool.args.currency0,
+          swapAddress
+        );
+        allowance2 = await getAllowance(
+          selectedPool.args.currency1,
+          swapAddress
+        );
+      } else {
+        alert("Swap address not found");
+      }
 
       let approve1 = true; // Default olarak true, çünkü eğer allowance 0 değilse approval gerekmiyor.
       let approve2 = true; // Default olarak true, çünkü eğer allowance 0 değilse approval gerekmiyor.
@@ -194,10 +210,7 @@ const Swap = () => {
       if (BigInt(allowance1) === BigInt(0)) {
         console.log("Token 1 için onay gerekli.");
         approve1 = await Approve(selectedPool.args.currency0);
-        if (!approve1) {
-          console.error("Token 1 için onay işlemi başarısız oldu.");
-          return;
-        }
+        await waitForTransactionReceipt(config, {hash: approve1});
       } else {
         console.log("Token 1 için onay gerekli değil.");
       }
@@ -205,10 +218,7 @@ const Swap = () => {
       if (BigInt(allowance2) === BigInt(0)) {
         console.log("Token 2 için onay gerekli.");
         approve2 = await Approve(selectedPool.args.currency1);
-        if (!approve2) {
-          console.error("Token 2 için onay işlemi başarısız oldu.");
-          return;
-        }
+        await waitForTransactionReceipt(config, {hash: approve2});
       } else {
         console.log("Token 2 için onay gerekli değil.");
       }
@@ -239,10 +249,25 @@ const Swap = () => {
 
   async function getSlot() {
     if (!selectedPool) return;
+    const account = getAccount(config);
+    let readerAddress = "";
+    let poolManagerAddress = "";
+    if (account.chainId) {
+      if (String(account.chainId) == "421614") {
+        readerAddress = "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E";
+        poolManagerAddress = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
+      } else if (String(account.chainId) == "11155111") {
+        // Bu değişecek
+        readerAddress = "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E";
+        poolManagerAddress = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
+      } else {
+        alert("Invalid chainId");
+      }
+    }
     try {
       const slot = await readContract(config, {
         abi: LiquidiytDeltaABI,
-        address: "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E",
+        address: readerAddress,
         functionName: "getSlot0",
         args: [
           [
@@ -252,7 +277,7 @@ const Swap = () => {
             selectedPool.args.tickSpacing,
             selectedPool.args.hooks,
           ],
-          "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58",
+          poolManagerAddress,
         ],
       });
       console.log(slot);
@@ -276,12 +301,27 @@ const Swap = () => {
       alert("Invalid Token Address");
       return;
     }
+
+    const account = getAccount(config);
+    let address = "";
+    if (account.chainId) {
+      if (String(account.chainId) == "421614") {
+        address = "0x540bFc2FB3B040761559519f9F44690812f3514e";
+      } else if (String(account.chainId) == "11155111") {
+        address = "0x540bFc2FB3B040761559519f9F44690812f3514e"; // bu değişecek
+      } else {
+        alert("Invalid chainId");
+      }
+    } else {
+      alert("Chain ID not found");
+    }
+
     try {
       const approve = await writeContract(config, {
         abi: ERC20ABI,
         address: tokenAddress,
         functionName: "approve",
-        args: ["0x540bFc2FB3B040761559519f9F44690812f3514e", uintMax],
+        args: [address, uintMax],
       });
       console.log("Approve " + approve);
       return approve;

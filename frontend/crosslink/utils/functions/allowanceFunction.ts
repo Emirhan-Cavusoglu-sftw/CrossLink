@@ -16,6 +16,8 @@ export async function getAllowance(
     return /^0x[a-fA-F0-9]{40}$/.test(tokenAddress);
   }
 
+  console.log("Address: ", address);
+
   if (!isValidAddress(tokenAddress)) {
     alert("Invalid Token Address");
     return;

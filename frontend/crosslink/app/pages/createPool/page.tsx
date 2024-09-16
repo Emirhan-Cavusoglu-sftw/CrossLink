@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { PoolManagerABI } from "../../../utils/poolManagerABI.json";
-import { writeContract, readContract } from "@wagmi/core";
+import { writeContract, readContract, getAccount } from "@wagmi/core";
 import { config } from "../../../utils/config";
 import { getTokenInfo } from "../../../utils/functions/createTokenFunctions";
 import { useHook } from "../../../components/hookContext";
@@ -24,7 +24,7 @@ const availableHooks = {
   UniswapV4: "0x0000000000000000000000000000000000000000",
   Nezlobin: "0x7Ce503FC8c2E2531D5aF549bf77f040Ad9c36080",
   LimitOrder: "0x735F883b29561463ec096670974670EC5Ff5D040",
-};
+}; // buraya sepoliadaki hooklar da eklenecek
 
 const CreatePool = () => {
   const [currency0, setCurrency0] = useState("");
@@ -51,18 +51,17 @@ const CreatePool = () => {
         symbol: "ARB",
       },
     ];
-  
+
     getTokenInfo((fetchedTokens) => {
       setTokenInfo([...fetchedTokens, ...customTokens]);
     });
   }, []);
-  
 
   useEffect(() => {
-    if (selectedHook == "0x7Ce503FC8c2E2531D5aF549bf77f040Ad9c36080") {
+    if (selectedHook == "0x7Ce503FC8c2E2531D5aF549bf77f040Ad9c36080" || selectedHook == "0x7Ce503FC8c2E2531D5aF549bf77f040Ad9c36080") {
       setFee("8388608");
     }
-  }, [selectedHook]);
+  }, [selectedHook]); // Buradaki hooklar değişecek her iki chain için de
 
   const sqrtPriceOptions = [
     { value: "79228162514264337593543950336", label: "1:1" },
@@ -94,10 +93,20 @@ const CreatePool = () => {
   };
 
   async function createPool(address0: string, address1: string) {
+    const account = getAccount(config);
+    let address = "";
+    if (account.chainId) {
+      if (String(account.chainId) == "421614") {
+        address = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
+      } else if (String(account.chainId) == "11155111") {
+        // burası değişecek
+        address = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
+      }
+    }
     try {
       const newPool = await writeContract(config, {
         abi: PoolManagerABI,
-        address: "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58",
+        address: address,
         functionName: "initialize",
         args: [
           [

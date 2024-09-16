@@ -16,10 +16,21 @@ export async function placeOrder(
   zeroForOne: boolean,
   amountIn: string
 ) {
+  const account = getAccount(config);
+  let orderHook = "";
+  if (account.chainId) {
+    if (String(account.chainId) == "421614") {
+      orderHook = "0x735F883b29561463ec096670974670EC5Ff5D040";
+    } else if (String(account.chainId) == "11155111") {
+      orderHook = "0x735F883b29561463ec096670974670EC5Ff5D040"; // bu değişecek
+    } else {
+      alert("Invalid chainId");
+    }
+  }
   try {
     const placeOrder = await writeContract(config, {
       abi: LimitOrderABI,
-      address: "0x735F883b29561463ec096670974670EC5Ff5D040",
+      address: orderHook,
       functionName: "placeOrder",
       args: [
         [currency0, currency1, fee, tickSpacing, hooks],
@@ -57,10 +68,21 @@ export async function getPositionId(
   zeroForOne: boolean
 ) {
   const revertedTick = await getLowerUsableTick(tick, tickSpacing);
+  const account = getAccount(config);
+  let orderHook = "";
+  if (account.chainId) {
+    if (String(account.chainId) == "421614") {
+      orderHook = "0x735F883b29561463ec096670974670EC5Ff5D040";
+    } else if (String(account.chainId) == "11155111") {
+      orderHook = "0x735F883b29561463ec096670974670EC5Ff5D040"; // bu değişecek
+    } else {
+      alert("Invalid chainId");
+    }
+  }
   try {
     const positionId = await readContract(config, {
       abi: LimitOrderABI,
-      address: "0x735F883b29561463ec096670974670EC5Ff5D040",
+      address: orderHook,
       functionName: "getPositionId",
       args: [
         [
@@ -68,7 +90,7 @@ export async function getPositionId(
           currency1,
           fee,
           tickSpacing,
-          "0x735F883b29561463ec096670974670EC5Ff5D040",
+          orderHook,
         ],
         revertedTick,
         zeroForOne,
@@ -87,10 +109,20 @@ export async function balanceOf(positionId: string) {
     console.error("Account not found or address is invalid.");
     return;
   }
+  let orderHook = "";
+  if (account.chainId) {
+    if (String(account.chainId) == "421614") {
+      orderHook = "0x735F883b29561463ec096670974670EC5Ff5D040";
+    } else if (String(account.chainId) == "11155111") {
+      orderHook = "0x735F883b29561463ec096670974670EC5Ff5D040"; // bu değişecek
+    } else {
+      alert("Invalid chainId");
+    }
+  }
   try {
     const balance = await readContract(config, {
       abi: LimitOrderABI,
-      address: "0x735F883b29561463ec096670974670EC5Ff5D040",
+      address: orderHook,
       functionName: "balanceOf",
       args: [account.address, BigInt(positionId)],
     });
@@ -102,10 +134,21 @@ export async function balanceOf(positionId: string) {
 }
 
 export async function claimableOutputTokens(positionId: string) {
+  const account = getAccount(config);
+  let orderHook = "";
+  if (account.chainId) {
+    if (String(account.chainId) == "421614") {
+      orderHook = "0x735F883b29561463ec096670974670EC5Ff5D040";
+    } else if (String(account.chainId) == "11155111") {
+      orderHook = "0x735F883b29561463ec096670974670EC5Ff5D040"; // bu değişecek
+    } else {
+      alert("Invalid chainId");
+    }
+  }
   try {
     const claimableOutputTokens = await readContract(config, {
       abi: LimitOrderABI,
-      address: "0x735F883b29561463ec096670974670EC5Ff5D040",
+      address: orderHook,
       functionName: "claimableOutputTokens",
       args: [BigInt(positionId)],
     });
@@ -127,20 +170,31 @@ export async function redeem(
   tickToSellAt: number,
   zeroForOne: boolean,
   amountIn: number,
-  destinationChainSelector : number
+  destinationChainSelector: number
 ) {
   console.log("destinationChainSelector: ", destinationChainSelector);
+  const account = getAccount(config);
+  let orderHook = "";
+  if (account.chainId) {
+    if (String(account.chainId) == "421614") {
+      orderHook = "0x735F883b29561463ec096670974670EC5Ff5D040";
+    } else if (String(account.chainId) == "11155111") {
+      orderHook = "0x735F883b29561463ec096670974670EC5Ff5D040"; // bu değişecek
+    } else {
+      alert("Invalid chainId");
+    }
+  }
   try {
     const redeem = await writeContract(config, {
       abi: LimitOrderABI,
-      address: "0x735F883b29561463ec096670974670EC5Ff5D040",
+      address: orderHook,
       functionName: "redeem",
       args: [
         [currency0, currency1, fee, tickSpacing, hooks],
         tickToSellAt,
         zeroForOne,
         BigInt(String(amountIn)),
-        BigInt("16015286601757825753")
+        BigInt("16015286601757825753"),
       ],
     });
     console.log("Redeem:", redeem);
@@ -161,10 +215,21 @@ export async function cancelOrder(
   tickToSellAt: number,
   zeroForOne: boolean
 ) {
+  const account = getAccount(config);
+  let orderHook = "";
+  if (account.chainId) {
+    if (String(account.chainId) == "421614") {
+      orderHook = "0x735F883b29561463ec096670974670EC5Ff5D040";
+    } else if (String(account.chainId) == "11155111") {
+      orderHook = "0x735F883b29561463ec096670974670EC5Ff5D040"; // bu değişecek
+    } else {
+      alert("Invalid chainId");
+    }
+  }
   try {
     const cancelOrder = await writeContract(config, {
       abi: LimitOrderABI,
-      address: "0x735F883b29561463ec096670974670EC5Ff5D040",
+      address: orderHook,
       functionName: "cancelOrder",
       args: [
         [currency0, currency1, fee, tickSpacing, hooks],
