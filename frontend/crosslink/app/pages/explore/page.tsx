@@ -1,13 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { PoolManagerABI } from "../../../utils/poolManagerABI.json";
-import { decodeEventLog } from "viem";
-import { keccak256, toBytes } from "viem";
 import { useHook } from "../../../components/hookContext";
 import { useRouter } from "next/navigation";
 import { getTokenInfo } from "../../../utils/functions/createTokenFunctions";
 import { LiquidiytDeltaABI } from "../../../utils/readerABI.json";
-import { writeContract, readContract, getAccount } from "@wagmi/core";
+import { readContract, getAccount } from "@wagmi/core";
 import { config } from "../../../utils/config";
 
 interface Event {
@@ -142,8 +139,8 @@ const Explore = () => {
         readerAddress = "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E";
         poolManagerAddress = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
       } else if (String(account.chainId) == "11155111") {
-        readerAddress = "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E";
-        poolManagerAddress = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
+        readerAddress = "0xB9A3472106Bb737FA7Fedd215D7cA35F0d52D879";
+        poolManagerAddress = "0xbb46AB4ecC82166Be4d34f5a79992e582d14206a";
       } else {
         alert("Invalid chainId");
       }

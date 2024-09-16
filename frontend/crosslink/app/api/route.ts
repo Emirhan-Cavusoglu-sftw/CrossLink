@@ -7,8 +7,8 @@ import { LimitOrderABI } from "../../utils/limitOrderHookABI.json";
 const etherScanApiKey = process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY || "";
 const arbiscanApiKey = process.env.NEXT_PUBLIC_ARBISCAN_API_KEY || "";
 
-const CounterAddress = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
-const SecondAddress = "0x735F883b29561463ec096670974670EC5Ff5D040";
+let poolManagerAddress = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
+let limitOrderHookAddress = "0x735F883b29561463ec096670974670EC5Ff5D040";
 
 export async function POST(req: Request) {
   try {
@@ -24,6 +24,8 @@ export async function POST(req: Request) {
     if (chainId === 11155111) {
       apiBaseUrl = "https://api-sepolia.etherscan.io/api";
       apiKey = etherScanApiKey;
+      poolManagerAddress = "0xbb46AB4ecC82166Be4d34f5a79992e582d14206a";
+      limitOrderHookAddress = "0x1dB4DF1583a546d74E7C3C303c37AC75204cD040";
     } else if (chainId === 421614) {
       apiBaseUrl = "https://api-sepolia.arbiscan.io/api";
       apiKey = arbiscanApiKey;
@@ -45,7 +47,7 @@ export async function POST(req: Request) {
           "Initialize(bytes32,address,address,uint24,int24,address,uint160,int24)"
         )
       );
-      selectedAddress = CounterAddress;
+      selectedAddress = poolManagerAddress;
     } else if (ABIType === "OrderPlaced") {
       selectedABI = LimitOrderABI;
       eventSignature = keccak256(
@@ -53,7 +55,7 @@ export async function POST(req: Request) {
           "OrderPlaced(address,address,uint24,int24,address,int24,bool,uint256,address)"
         )
       );
-      selectedAddress = SecondAddress;
+      selectedAddress = limitOrderHookAddress;
     } else {
       return NextResponse.json(
         { message: "Invalid ABI type" },

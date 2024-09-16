@@ -1,13 +1,15 @@
 "use client";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useHook } from "./hookContext";
 import Image from "next/image";
 import Link from "next/link";
+import { getAccount } from "@wagmi/core";
+import { config } from "../utils/config";
 
-const nezlobinHook = "0x7Ce503FC8c2E2531D5aF549bf77f040Ad9c36080"; // Nezlobin
-const limitOrderHook = "0x735F883b29561463ec096670974670EC5Ff5D040"; // Limit Order
+let nezlobinHook = "0xCB755c1c639517EE731Aa577cdb8308aBFEB2080"; // Nezlobin
+let limitOrderHook = "0x735F883b29561463ec096670974670EC5Ff5D040"; // Limit Order
 const defaultHook = "0x0000000000000000000000000000000000000000"; //UniswapV4
 
 const Header = () => {
@@ -20,6 +22,25 @@ const Header = () => {
   const handleNavigation = (path: string) => {
     router.push(path);
     setSelectedPage(path);
+  };
+
+  useEffect(() => {
+    chainHooksSelector();
+  }, []);
+
+  const chainHooksSelector = async () => {
+    const account = getAccount(config);
+    if (account.chainId) {
+      if (String(account.chainId) == "421614") {
+        nezlobinHook = "0xCB755c1c639517EE731Aa577cdb8308aBFEB2080";
+        limitOrderHook = "0x735F883b29561463ec096670974670EC5Ff5D040";
+      } else if (String(account.chainId) == "11155111") {
+        nezlobinHook = "0x5886047EcfE4465CeF451C72B74C93c337F42080";
+        limitOrderHook = "0x1dB4DF1583a546d74E7C3C303c37AC75204cD040";
+      } else {
+        alert("Invalid chainId");
+      }
+    }
   };
 
   const getButtonClass = (path: string) => {

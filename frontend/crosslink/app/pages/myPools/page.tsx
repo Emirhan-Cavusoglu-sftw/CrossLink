@@ -33,10 +33,6 @@ interface TokenInfo {
   symbol: string;
 }
 
-const etherScanApiKey = process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY || "";
-const arbiscanApiKey = process.env.NEXT_PUBLIC_ARBISCAN_API_KEY || "";
-
-const arbNative = "0x0000000000000000000000000000000000000000";
 const ccip = "0xA8C0c11bf64AF62CDCA6f93D3769B88BdD7cb93D";
 
 const MyPools = () => {
@@ -61,12 +57,6 @@ const MyPools = () => {
         mintedBy: "0xYourAddressHere", // Bu adresi gerektiği gibi ayarlayın
         name: "CCIP-BnM",
         symbol: "CCIP",
-      },
-      {
-        tokenAddress: arbNative,
-        mintedBy: "0xYourAddressHere", // Bu adresi gerektiği gibi ayarlayın
-        name: "Arbitrum Native",
-        symbol: "ARB",
       },
     ];
 
@@ -171,8 +161,8 @@ const MyPools = () => {
         readerAddress = "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E";
         poolManagerAddress = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
       } else if (String(account.chainId) == "11155111") {
-        readerAddress = "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E";
-        poolManagerAddress = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
+        readerAddress = "0xB9A3472106Bb737FA7Fedd215D7cA35F0d52D879";
+        poolManagerAddress = "0xbb46AB4ecC82166Be4d34f5a79992e582d14206a";
       } else {
         alert("Invalid chainId");
       }
