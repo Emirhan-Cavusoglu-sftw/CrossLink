@@ -32,10 +32,10 @@ contract DeployCrossLimitOrderHook is Script {
             CREATE2_DEPLOYER,
             flags,
             type(CrossLimitOrder).creationCode,
-            abi.encode(address(0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58),"",0x2a9C5afB0d0e4BAb2BCdaE109EC4b0c4Be15a165,0xb1D4538B4571d411F07960EF2838Ce337FE1E80E,3478487238524512106)
+            abi.encode(address(0xbb46AB4ecC82166Be4d34f5a79992e582d14206a),"",0x0BF3dE8c5D3e8A2B34D2BEeB17ABfCeBaf363A59,0x779877A7B0D9E8603169DdbD7836e478b4624789,16015286601757825753)
         );
         CrossLimitOrder hook = new CrossLimitOrder{salt: salt}(
-            IPoolManager(address(0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58)),"",0x2a9C5afB0d0e4BAb2BCdaE109EC4b0c4Be15a165,0xb1D4538B4571d411F07960EF2838Ce337FE1E80E,3478487238524512106
+            IPoolManager(address(0xbb46AB4ecC82166Be4d34f5a79992e582d14206a)),"",0x0BF3dE8c5D3e8A2B34D2BEeB17ABfCeBaf363A59,0x779877A7B0D9E8603169DdbD7836e478b4624789,16015286601757825753
         );
         console.log("Hook address: %s", address(hook));
 
