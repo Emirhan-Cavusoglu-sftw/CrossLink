@@ -1,4 +1,3 @@
-import { PoolManagerABI } from "../poolManagerABI.json";
 import { writeContract, readContract } from "@wagmi/core";
 import { config } from "../config";
 import { getAccount } from "@wagmi/core";
@@ -6,7 +5,6 @@ import { parseUnits, formatUnits, parseEther } from "viem";
 import { ModifiyLiquidityABI } from "../modifyLiquidityABI.json";
 import { LiquidiytDeltaABI } from "../readerABI.json";
 import { ERC20ABI } from "../ERC20ABI.json";
-import { get } from "http";
 
 export async function Approve(tokenAddress: string) {
   const uintMax = 10000000000000000000000000;
@@ -26,7 +24,7 @@ export async function Approve(tokenAddress: string) {
     if (String(account.chainId) == "421614") {
       address = "0xc66f440Ee31e3aE0b026972Ad0C6D62DfD27596B";
     } else if (String(account.chainId) == "11155111") {
-      address = "0xc66f440Ee31e3aE0b026972Ad0C6D62DfD27596B";
+      address = "0x0E67d44a512Bcf556FA8ef0e957Fbe843f67b53f";
     } else {
       alert("Invalid chainId");
     }
@@ -61,7 +59,7 @@ export async function addLiquidity(
     if (String(account.chainId) == "421614") {
       address = "0xc66f440Ee31e3aE0b026972Ad0C6D62DfD27596B";
     } else if (String(account.chainId) == "11155111") {
-      address = "0xc66f440Ee31e3aE0b026972Ad0C6D62DfD27596B";
+      address = "0x0E67d44a512Bcf556FA8ef0e957Fbe843f67b53f";
     } else {
       alert("Invalid chainId");
     }
@@ -110,8 +108,8 @@ export async function getLiquidityDelta(
       address = "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E";
       managerAddress = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
     } else if (String(account.chainId) == "11155111") {
-      address = "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E";
-      managerAddress = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
+      address = "0xB9A3472106Bb737FA7Fedd215D7cA35F0d52D879";
+      managerAddress = "0xbb46AB4ecC82166Be4d34f5a79992e582d14206a";
     } else {
       alert("Invalid chainId");
     }

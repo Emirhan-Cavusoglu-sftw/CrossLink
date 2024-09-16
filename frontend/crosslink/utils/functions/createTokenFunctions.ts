@@ -15,7 +15,7 @@ export async function createToken(tokenName: string, tokenSymbol: string) {
       launchPadAddress = "0x5112c7a1E0D89ca200ecd23BB38fDc21dd5C6B51";
     } else if (String(account.chainId) == "11155111") {
       // bu değişecek
-      launchPadAddress = "0x5112c7a1E0D89ca200ecd23BB38fDc21dd5C6B51";
+      launchPadAddress = "0x8763D5C438e43B31eaB713Bc2663E25534B8d0bF";
     } else {
       alert("Invalid chainId");
     }
@@ -44,7 +44,7 @@ export async function getTokenInfo(
       launchPadAddress = "0x5112c7a1E0D89ca200ecd23BB38fDc21dd5C6B51";
     } else if (String(account.chainId) == "11155111") {
       // bu değişecek
-      launchPadAddress = "0x5112c7a1E0D89ca200ecd23BB38fDc21dd5C6B51";
+      launchPadAddress = "0x8763D5C438e43B31eaB713Bc2663E25534B8d0bF";
     } else {
       alert("Invalid chainId");
     }
@@ -83,7 +83,7 @@ export async function getUserTokens(
       launchPadAddress = "0x5112c7a1E0D89ca200ecd23BB38fDc21dd5C6B51";
     } else if (String(account.chainId) == "11155111") {
       // bu değişecek
-      launchPadAddress = "0x5112c7a1E0D89ca200ecd23BB38fDc21dd5C6B51";
+      launchPadAddress = "0x8763D5C438e43B31eaB713Bc2663E25534B8d0bF";
     } else {
       alert("Invalid chainId");
     }
@@ -117,7 +117,7 @@ export async function mintToken(tokenAddress: string) {
         launchPadAddress = "0x5112c7a1E0D89ca200ecd23BB38fDc21dd5C6B51";
       } else if (String(account.chainId) == "11155111") {
         // bu değişecek
-        launchPadAddress = "0x5112c7a1E0D89ca200ecd23BB38fDc21dd5C6B51";
+        launchPadAddress = "0x8763D5C438e43B31eaB713Bc2663E25534B8d0bF";
       } else {
         alert("Invalid chainId");
       }

@@ -22,7 +22,7 @@ export async function swap(
     if (String(account.chainId) == "421614") {
       address = "0x540bFc2FB3B040761559519f9F44690812f3514e";
     } else if (String(account.chainId) == "11155111") {
-      address = "0x540bFc2FB3B040761559519f9F44690812f3514e"; // bu değişecek
+      address = "0x4a4E86EC2e24ded9d7C77aD103C49b62a10c54A2";
     } else {
       alert("Invalid chainId");
     }

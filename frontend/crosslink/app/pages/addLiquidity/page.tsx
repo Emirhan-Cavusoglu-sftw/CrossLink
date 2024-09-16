@@ -12,8 +12,7 @@ import { waitForTransactionReceipt } from "@wagmi/core";
 import { config } from "../../../utils/config";
 import { getAllowance } from "../../../utils/functions/allowanceFunction";
 import { LiquidiytDeltaABI } from "../../../utils/readerABI.json";
-import { writeContract, readContract, getAccount } from "@wagmi/core";
-import { a } from "framer-motion/client";
+import { readContract, getAccount } from "@wagmi/core";
 
 const Liquidity = () => {
   const searchParams = useSearchParams();
@@ -86,16 +85,13 @@ const Liquidity = () => {
     console.log("Lower Tick:", lowerTick);
     console.log("Upper Tick:", upperTick);
 
-    const poolModifyLiquidityAddress =
-      "0xc66f440Ee31e3aE0b026972Ad0C6D62DfD27596B";
-
     const account = getAccount(config);
     let modifyLiquidityAddress = "";
     if (account.chainId) {
       if (String(account.chainId) == "421614") {
         modifyLiquidityAddress = "0xc66f440Ee31e3aE0b026972Ad0C6D62DfD27596B";
       } else if (String(account.chainId) == "11155111") {
-        modifyLiquidityAddress = "0xc66f440Ee31e3aE0b026972Ad0C6D62DfD27596B";
+        modifyLiquidityAddress = "0x0E67d44a512Bcf556FA8ef0e957Fbe843f67b53f";
       } else {
         alert("Chain ID not supported.");
       }
@@ -174,8 +170,8 @@ const Liquidity = () => {
         readerAddress = "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E";
         address = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
       } else if (String(account.chainId) == "11155111") {
-        readerAddress = "0x86a6cE6DE9d2A6D4CDafcFfdD24C6B69676acF3E";
-        address = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
+        readerAddress = "0xB9A3472106Bb737FA7Fedd215D7cA35F0d52D879";
+        address = "0xbb46AB4ecC82166Be4d34f5a79992e582d14206a";
       } else {
         alert("Chain ID not supported.");
       }

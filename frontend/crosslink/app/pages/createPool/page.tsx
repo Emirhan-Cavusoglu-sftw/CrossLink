@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { PoolManagerABI } from "../../../utils/poolManagerABI.json";
-import { writeContract, readContract, getAccount } from "@wagmi/core";
+import { writeContract, getAccount } from "@wagmi/core";
 import { config } from "../../../utils/config";
 import { getTokenInfo } from "../../../utils/functions/createTokenFunctions";
 import { useHook } from "../../../components/hookContext";
@@ -17,14 +17,15 @@ interface TokenInfo {
   symbol: string;
 }
 
-const ccip = "0xA8C0c11bf64AF62CDCA6f93D3769B88BdD7cb93D";
-const arbNative = "0x0000000000000000000000000000000000000000";
+let ccip = "0xA8C0c11bf64AF62CDCA6f93D3769B88BdD7cb93D";
 
 const availableHooks = {
   UniswapV4: "0x0000000000000000000000000000000000000000",
-  Nezlobin: "0x7Ce503FC8c2E2531D5aF549bf77f040Ad9c36080",
-  LimitOrder: "0x735F883b29561463ec096670974670EC5Ff5D040",
-}; // buraya sepoliadaki hooklar da eklenecek
+  ArbitrumNezlobin: "0xCB755c1c639517EE731Aa577cdb8308aBFEB2080",
+  ArbitrumLimitOrder: "0x735F883b29561463ec096670974670EC5Ff5D040",
+  SepoliaNezlobin: "0x5886047EcfE4465CeF451C72B74C93c337F42080",
+  SepoliaLimitOrder: "0x1dB4DF1583a546d74E7C3C303c37AC75204cD040",
+};
 
 const CreatePool = () => {
   const [currency0, setCurrency0] = useState("");
@@ -44,12 +45,6 @@ const CreatePool = () => {
         name: "CCIP-BnM",
         symbol: "CCIP",
       },
-      {
-        tokenAddress: arbNative,
-        mintedBy: "0xYourAddressHere", // Bu adresi gerektiği gibi ayarlayın
-        name: "Arbitrum Native",
-        symbol: "ARB",
-      },
     ];
 
     getTokenInfo((fetchedTokens) => {
@@ -58,10 +53,28 @@ const CreatePool = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedHook == "0x7Ce503FC8c2E2531D5aF549bf77f040Ad9c36080" || selectedHook == "0x7Ce503FC8c2E2531D5aF549bf77f040Ad9c36080") {
+    if (
+      selectedHook == "0xCB755c1c639517EE731Aa577cdb8308aBFEB2080" ||
+      selectedHook == "0x5886047EcfE4465CeF451C72B74C93c337F42080"
+    ) {
       setFee("8388608");
     }
-  }, [selectedHook]); // Buradaki hooklar değişecek her iki chain için de
+  }, [selectedHook]);
+
+  useEffect(() => {
+    selectCcipAddress();
+  });
+
+  const selectCcipAddress = () => {
+    const account = getAccount(config);
+    if (account.chainId) {
+      if (String(account.chainId) == "421614") {
+        ccip = "0xA8C0c11bf64AF62CDCA6f93D3769B88BdD7cb93D";
+      } else if (String(account.chainId) == "11155111") {
+        ccip = "0xFd57b4ddBf88a4e07fF4e34C487b99af2Fe82a05";
+      }
+    }
+  };
 
   const sqrtPriceOptions = [
     { value: "79228162514264337593543950336", label: "1:1" },
@@ -99,8 +112,7 @@ const CreatePool = () => {
       if (String(account.chainId) == "421614") {
         address = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
       } else if (String(account.chainId) == "11155111") {
-        // burası değişecek
-        address = "0x5F49Cf21273563a628F31cd08C1D4Ada7722aB58";
+        address = "0xbb46AB4ecC82166Be4d34f5a79992e582d14206a";
       }
     }
     try {

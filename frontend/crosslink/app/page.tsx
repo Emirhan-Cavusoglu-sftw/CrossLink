@@ -161,10 +161,9 @@ export default function Home() {
                   Hook. Set buy or sell orders with precise price points, just
                   as you would in an order book system. This provides greater
                   control and flexibility, allowing you to optimize trades and
-                  reduce slippage. As the first hook project on Educhain, this
-                  feature empowers users to interact with the market on their
-                  terms, combining the best of decentralized finance with
-                  familiar trading tools.
+                  reduce slippage. This feature empowers users to interact with
+                  the market on their terms, combining the best of decentralized
+                  finance with familiar trading tools.
                 </span>
               </div>
             </motion.div>

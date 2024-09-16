@@ -123,14 +123,14 @@ const MyOrders = () => {
     fetchSymbols();
   }, [events]);
 
-  useEffect(() => {
-    if (
-      selectedHook !== "0x735F883b29561463ec096670974670EC5Ff5D040" ||
-      selectedHook !== "0x735F883b29561463ec096670974670EC5Ff5D040" // bu değişecek
-    ) {
-      router.push("/");
-    }
-  }, [selectedHook]);
+  // useEffect(() => {
+  //   if (
+  //     selectedHook !== "0x735F883b29561463ec096670974670EC5Ff5D040" ||
+  //     selectedHook !== "0x1dB4DF1583a546d74E7C3C303c37AC75204cD040"
+  //   ) {
+  //     router.push("/");
+  //   }
+  // }, [selectedHook]);
 
   console.log("isloading: " + isLoading);
 
@@ -251,7 +251,7 @@ const MyOrders = () => {
           hookAddress = "0x735F883b29561463ec096670974670EC5Ff5D040";
         } else if (String(account.chainId) == "11155111") {
           // bu değişecek
-          hookAddress = "0x735F883b29561463ec096670974670EC5Ff5D040";
+          hookAddress = "0x1dB4DF1583a546d74E7C3C303c37AC75204cD040";
         } else {
           alert("Invalid chainId");
         }
@@ -331,7 +331,7 @@ const MyOrders = () => {
         hookAddress = "0x735F883b29561463ec096670974670EC5Ff5D040";
       } else if (String(account.chainId) == "11155111") {
         // bu değişecek
-        hookAddress = "0x735F883b29561463ec096670974670EC5Ff5D040";
+        hookAddress = "0x1dB4DF1583a546d74E7C3C303c37AC75204cD040";
       } else {
         alert("Invalid chainId");
       }
@@ -433,10 +433,10 @@ const MyOrders = () => {
   }
 
   const handleLogoToggle = () => {
-    if (selectedLogo === "eth") {
+    if (selectedLogo === "arb") {
       setSelectedLogo("arb");
       setDestinationChainSelector("3478487238524512106");
-    } else {
+    } else if (selectedLogo === "eth") {
       setSelectedLogo("eth");
       setDestinationChainSelector("16015286601757825753");
     }
