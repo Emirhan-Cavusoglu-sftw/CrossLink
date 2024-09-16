@@ -34,7 +34,6 @@ const CreateToken = () => {
     await createToken(tokenName, tokenSymbol);
     await getTokenInfo(setTokenInfo);
     await getUserTokens(setUserTokens);
-    window.location.reload();
   };
 
   useEffect(() => {
@@ -45,7 +44,7 @@ const CreateToken = () => {
   const handleMintToken = async (tokenAddress: string) => {
     await mintToken(tokenAddress);
     await handleGetBalance(tokenAddress);
-    window.location.reload();
+    await getUserTokens(setUserTokens);
   };
 
   const handleGetBalance = async (tokenAddress: string) => {

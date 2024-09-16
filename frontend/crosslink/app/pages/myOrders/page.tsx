@@ -433,10 +433,10 @@ const MyOrders = () => {
   }
 
   const handleLogoToggle = () => {
-    if (selectedLogo === "eth") {
+    if (selectedLogo === "arb") {
       setSelectedLogo("arb");
       setDestinationChainSelector("3478487238524512106");
-    } else {
+    } else if (selectedLogo === "eth") {
       setSelectedLogo("eth");
       setDestinationChainSelector("16015286601757825753");
     }

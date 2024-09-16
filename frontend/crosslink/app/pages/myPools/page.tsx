@@ -33,7 +33,7 @@ interface TokenInfo {
   symbol: string;
 }
 
-const ccip = "0xA8C0c11bf64AF62CDCA6f93D3769B88BdD7cb93D";
+let ccip = "0xA8C0c11bf64AF62CDCA6f93D3769B88BdD7cb93D";
 
 const MyPools = () => {
   const router = useRouter();
@@ -70,6 +70,21 @@ const MyPools = () => {
       fetchEvents(); // `selectedHook` değeri ve token bilgileri hazır olduğunda havuzları çek
     }
   }, [selectedHook, tokenInfo]);
+
+  useEffect(() => {
+    selectCcipAddress();
+  });
+
+  const selectCcipAddress = () => {
+    const account = getAccount(config);
+    if (account.chainId) {
+      if (String(account.chainId) == "421614") {
+        ccip = "0xA8C0c11bf64AF62CDCA6f93D3769B88BdD7cb93D";
+      } else if (String(account.chainId) == "11155111") {
+        ccip = "0xFd57b4ddBf88a4e07fF4e34C487b99af2Fe82a05";
+      }
+    }
+  };
 
   const fetchEvents = async () => {
     setLoading(true);

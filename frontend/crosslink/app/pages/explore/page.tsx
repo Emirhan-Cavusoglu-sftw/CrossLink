@@ -31,7 +31,7 @@ interface TokenInfo {
 const account = getAccount(config);
 console.log("Chain Id " + account.chainId);
 
-const ccip = "0xA8C0c11bf64AF62CDCA6f93D3769B88BdD7cb93D";
+let ccip = "0xA8C0c11bf64AF62CDCA6f93D3769B88BdD7cb93D";
 
 const Explore = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -57,6 +57,22 @@ const Explore = () => {
       setTokenInfo([...fetchedTokens, ...customTokens]);
     });
   }, []);
+
+  
+  useEffect(() => {
+    selectCcipAddress();
+  });
+
+  const selectCcipAddress = () => {
+    const account = getAccount(config);
+    if (account.chainId) {
+      if (String(account.chainId) == "421614") {
+        ccip = "0xA8C0c11bf64AF62CDCA6f93D3769B88BdD7cb93D";
+      } else if (String(account.chainId) == "11155111") {
+        ccip = "0xFd57b4ddBf88a4e07fF4e34C487b99af2Fe82a05";
+      }
+    }
+  };
 
   const handleNavigationToPool = (pool) => {
     const token0 = tokenInfo.find(
